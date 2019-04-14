@@ -9,7 +9,7 @@ class Isolator:
         preprocessed_image = self._preprocess(cropped_image)
         threshold_image = self._threshold(preprocessed_image)
         contours = self._find_contours(threshold_image)
-        regions_of_interest = self._crop_regions_of_interest(image, contours)
+        regions_of_interest = self._crop_regions_of_interest(cropped_image, contours)
 
         return regions_of_interest
 
@@ -99,8 +99,8 @@ class Isolator:
         for contour in contours:
             x, y, w, h = cv2.boundingRect(contour)
 
-            length = int(w)
-            height = int(h)
+            length = int(w * 1.1)
+            height = int(h * 1.1)
 
             point_1 = int(y + h // 2 - height // 2)
             point_2 = int(x + w // 2 - length // 2)

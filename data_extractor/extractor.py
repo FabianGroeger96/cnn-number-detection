@@ -8,7 +8,7 @@ class Extractor:
     def __init__(self):
         os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
         self.DATA_DIR = "/images_to_extract"
-        self.CATEGORIES = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        self.CATEGORIES = ["-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
         self.isolator = Isolator()
 
