@@ -15,7 +15,7 @@ class Extractor:
         os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
         self.DATA_DIR = "images_to_extract"
         self.CATEGORIES = ["-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-        self.IMG_SIZE = 25
+        self.IMG_SIZE = 28
 
         self.isolator = Isolator()
         self.current_working_dir = os.getcwd()
@@ -113,11 +113,6 @@ class Extractor:
 
         for features, label in self.training_data:
             X.append(features)
-
-            y_label = np.zeros(11)
-            y_label[label] = 1.0
-            #y.append(y_label)
-
             y.append(label)
 
         X = np.array(X).reshape(-1, self.IMG_SIZE, self.IMG_SIZE, 3)
@@ -129,4 +124,6 @@ class Extractor:
         pickle_out = open("../y.pickle", "wb")
         pickle.dump(y, pickle_out)
         pickle_out.close()
+
+        print('[INFO] saved data model to root directory')
 

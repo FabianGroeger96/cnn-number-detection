@@ -1,9 +1,9 @@
-import os
 import pickle
 import tensorflow as tf
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.python.keras.utils import to_categorical
 
 
 class Trainer:
@@ -20,6 +20,8 @@ class Trainer:
 
         pickle_in = open("../y.pickle", "rb")
         self.y = pickle.load(pickle_in)
+        # one hot encode the labels
+        self.y = to_categorical(self.y)
 
     def set_batch_size(self, batch_size):
         self.BATCH_SIZE = batch_size
@@ -41,19 +43,19 @@ class Trainer:
         self.model = Sequential()
 
         # add model layers
-        self.model.add(Conv2D(256, (3, 3), input_shape=(25, 25, 3)))
+        self.model.add(Conv2D(256, kernel_size=3, input_shape=(28, 28, 3)))
         self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
-        self.model.add(Conv2D(256, (3, 3)))
+        self.model.add(Conv2D(256, kernel_size=3))
         self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
-        self.model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
+        self.model.add(Flatten())
 
-        #self.model.add(Dense(64))
+        self.model.add(Dense(64))
 
-        self.model.add(Dense(10))
+        self.model.add(Dense(11))
         self.model.add(Activation('softmax'))
 
         self.model.compile(loss='categorical_crossentropy',
@@ -74,4 +76,4 @@ class Trainer:
             overwrite=True,
             include_optimizer=True)
 
-        print('successfully saved model to: ', model_path)
+        print('[INFO] successfully saved model to: ', model_path)
