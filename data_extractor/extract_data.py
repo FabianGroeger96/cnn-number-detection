@@ -2,15 +2,18 @@ from data_extractor.extractor import Extractor
 
 
 def main():
-    print('start extracting regions of interest from data')
+    print('extracting regions of interest from data')
     extractor = Extractor()
     #extractor.extract_data()
-    print('finished extracting regions of interest')
 
-    print('started renaming images in categories')
-    extractor.rename_images_in_categories()
-    print('finished renaming images')
+    print('renaming images in categories')
+    #extractor.rename_images_in_categories()
 
+    print('creating training data')
+    extractor.create_training_data()
+
+    print('creating model')
+    extractor.create_model()
 
 if __name__ == "__main__":
     main()
