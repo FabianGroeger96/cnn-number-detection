@@ -1,5 +1,6 @@
 import pickle
 import tensorflow as tf
+import time
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten, InputLayer
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
@@ -16,7 +17,9 @@ class Trainer:
         self.VALIDATION_SPLIT = 0.3
 
         self.model = None
-        self.optimizer = Adam(lr=1e-3) # specify learning rate for optimizer
+        # specify learning rate for optimizer
+        self.optimizer = Adam(lr=1e-3)
+        # to start tensorboard run: tensorboard --logdir=logs/, in working directory
         self.tensorboard = None
 
         pickle_in = open("../X.pickle", "rb")
@@ -114,6 +117,51 @@ class Trainer:
 
         # display summary of the created model
         self.model.summary()
+
+    def create_various_models(self):
+        dense_layers = [0, 1, 2]
+        layer_sizes = [32, 64, 128]
+        conv_layers = [1, 2, 3]
+
+        for dense_layer in dense_layers:
+            for layer_size in layer_sizes:
+                for conv_layer in conv_layers:
+                    NAME = "{}-conv-{}-nodes-{}-dense-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
+                    print('[INFO] creating model: ', NAME)
+
+                    # create model
+                    model = Sequential()
+
+                    # add model layers
+                    model.add(Conv2D(layer_size, kernel_size=3, input_shape=(28, 28, 3)))
+                    model.add(Activation('relu'))
+                    model.add(MaxPooling2D(pool_size=(2, 2)))
+
+                    for l in range(conv_layer - 1):
+                        model.add(Conv2D(layer_size, kernel_size=3))
+                        model.add(Activation('relu'))
+                        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+                    model.add(Flatten())
+
+                    for _ in range(dense_layer):
+                        model.add(Dense(layer_size))
+                        model.add(Activation('relu'))
+
+                    model.add(Dense(11))
+                    model.add(Activation('softmax'))
+
+                    tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+
+                    model.compile(loss='categorical_crossentropy',
+                                  optimizer=self.optimizer,
+                                  metrics=['accuracy'],)
+
+                    model.fit(self.X, self.y,
+                              batch_size=self.BATCH_SIZE,
+                              epochs=self.EPOCHS,
+                              validation_split=self.VALIDATION_SPLIT,
+                              callbacks=[tensorboard])
 
     def fit_model(self):
         print('[INFO] training model')
