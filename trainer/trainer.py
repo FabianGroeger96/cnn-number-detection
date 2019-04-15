@@ -5,6 +5,7 @@ from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten, 
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.keras.utils import to_categorical
+from tensorflow.python.keras.callbacks import TensorBoard
 
 
 class Trainer:
@@ -16,6 +17,7 @@ class Trainer:
 
         self.model = None
         self.optimizer = Adam(lr=1e-3) # specify learning rate for optimizer
+        self.tensorboard = None
 
         pickle_in = open("../X.pickle", "rb")
         self.X = pickle.load(pickle_in)
@@ -40,7 +42,13 @@ class Trainer:
     def _normalize_data(self):
         self.X = self.X / 255
 
-    def create_model(self):
+    def create_model_deep(self):
+        # give the model a name for tensorboard
+        NAME = 'CNN-number-detection-deepnet'
+        self.tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+
+        print('[INFO] creating model: ', NAME)
+
         # create model
         self.model = Sequential()
 
@@ -71,24 +79,31 @@ class Trainer:
                       optimizer=self.optimizer,
                       metrics=['accuracy'])
 
+        # display summary of the created model
         self.model.summary()
 
     def create_model_light(self):
+        # give the model a name for tensorboard
+        NAME = 'CNN-number-detection-lightnet'
+        self.tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+
+        print('[INFO] creating model: ', NAME)
+
         # create model
         self.model = Sequential()
 
         # add model layers
-        self.model.add(Conv2D(256, kernel_size=3, input_shape=(28, 28, 3)))
+        self.model.add(Conv2D(64, kernel_size=3, input_shape=(28, 28, 3)))
         self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
-        self.model.add(Conv2D(256, kernel_size=3))
+        self.model.add(Conv2D(64, kernel_size=3))
         self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
         self.model.add(Flatten())
-
         self.model.add(Dense(64))
+        self.model.add(Activation('relu'))
 
         self.model.add(Dense(11))
         self.model.add(Activation('softmax'))
@@ -97,15 +112,21 @@ class Trainer:
                            optimizer=self.optimizer,
                            metrics=['accuracy'])
 
+        # display summary of the created model
         self.model.summary()
 
     def fit_model(self):
+        print('[INFO] training model')
+
         self.model.fit(self.X, self.y,
                        batch_size=self.BATCH_SIZE,
                        epochs=self.EPOCHS,
-                       validation_split=self.VALIDATION_SPLIT)
+                       validation_split=self.VALIDATION_SPLIT,
+                       callbacks=[self.tensorboard])
 
     def save_model(self):
+        print('[INFO] saving model')
+
         model_path = "../number_detection_model.h5"
         tf.keras.models.save_model(
             self.model,
