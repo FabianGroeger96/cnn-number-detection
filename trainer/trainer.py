@@ -182,4 +182,6 @@ class Trainer:
             overwrite=True,
             include_optimizer=True)
 
+        #self.model.save('../number_detection_model.model')
+
         print('[INFO] successfully saved model to: ', model_path)
