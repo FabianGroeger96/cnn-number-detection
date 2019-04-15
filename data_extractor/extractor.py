@@ -33,10 +33,10 @@ class Extractor:
 
     def extract_data(self):
         input_dir = os.path.join(self.current_working_dir, self.DATA_DIR)
-        print('Input directory: ', input_dir)
+        print('[INFO] Input directory: ', input_dir)
 
         output_dir = os.path.join(self.current_working_dir, "data_extracted")
-        print('Output directory: ', output_dir)
+        print('[INFO] Output directory: ', output_dir)
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
@@ -59,7 +59,7 @@ class Extractor:
             except:
                 continue
 
-        print('creating folders for sorting rois in categories')
+        print('[INFO] creating folders for sorting rois in categories')
         for category in self.CATEGORIES:
             category_dir = os.path.join(output_dir, category)
             if not os.path.exists(category_dir):
