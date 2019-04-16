@@ -9,6 +9,8 @@ from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.keras.utils import to_categorical
 from tensorflow.python.keras.callbacks import TensorBoard
 
+from tensorflow.python.keras.models import load_model
+
 
 class Trainer:
 
@@ -45,24 +47,25 @@ class Trainer:
 
         # add model layers
         # 1. Layer
-        self.model.add(InputLayer(input_shape=[constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION]))
-        self.model.add(Conv2D(filters=32, kernel_size=3, strides=1, padding='same'))
+        self.model.add(Conv2D(filters=16, kernel_size=3, strides=1, padding='same',
+                              input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
         self.model.add(Activation(activation='relu'))
         self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
         # 2. Layer
-        self.model.add(Conv2D(filters=50, kernel_size=3, strides=1, padding='same'))
+        self.model.add(Conv2D(filters=32, kernel_size=3, strides=1, padding='same'))
         self.model.add(Activation(activation='relu'))
         self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
         # 3. Layer
-        self.model.add(Conv2D(filters=80, kernel_size=3, strides=1, padding='same'))
+        self.model.add(Conv2D(filters=64, kernel_size=3, strides=1, padding='same'))
         self.model.add(Activation(activation='relu'))
         self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
         self.model.add(Dropout(rate=0.25))
         self.model.add(Flatten())
-        self.model.add(Dense(512, activation='relu'))
+        self.model.add(Dense(128, activation='relu'))
+
         self.model.add(Dropout(rate=0.5))
         self.model.add(Dense(len(constants.CATEGORIES), activation='softmax'))
 
@@ -84,14 +87,15 @@ class Trainer:
         self.model = Sequential()
 
         # add model layers
-        self.model.add(Conv2D(64, kernel_size=3, input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
+        self.model.add(Conv2D(16, kernel_size=3, input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
         self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
-        self.model.add(Conv2D(64, kernel_size=3))
+        self.model.add(Conv2D(32, kernel_size=3))
         self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
+        self.model.add(Dropout(rate=0.5))
         self.model.add(Flatten())
         self.model.add(Dense(64))
         self.model.add(Activation('relu'))
@@ -108,7 +112,7 @@ class Trainer:
 
     def create_various_models(self):
         dense_layers = [0, 1, 2]
-        layer_sizes = [32, 64, 128]
+        layer_sizes = [16, 32, 64]
         conv_layers = [1, 2, 3]
 
         for dense_layer in dense_layers:
@@ -166,12 +170,6 @@ class Trainer:
         print('[INFO] saving model')
 
         model_path = "../number_detection_model.h5"
-        tf.keras.models.save_model(
-            self.model,
-            model_path,
-            overwrite=True,
-            include_optimizer=True)
-
-        #self.model.save('../number_detection_model.model')
+        self.model.save(model_path)
 
         print('[INFO] successfully saved model to: ', model_path)
