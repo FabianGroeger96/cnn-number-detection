@@ -1,15 +1,12 @@
 import pickle
-import tensorflow as tf
 import time
 import constants
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten, InputLayer
+from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.keras.utils import to_categorical
 from tensorflow.python.keras.callbacks import TensorBoard
-
-from tensorflow.python.keras.models import load_model
 
 
 class Trainer:
@@ -169,7 +166,7 @@ class Trainer:
     def save_model(self):
         print('[INFO] saving model')
 
-        model_path = "../number_detection_model.h5"
+        model_path = "{}.h5".format(constants.MODEL_DIR)
         self.model.save(model_path)
 
         print('[INFO] successfully saved model to: ', model_path)

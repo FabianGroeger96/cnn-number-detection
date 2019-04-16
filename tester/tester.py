@@ -2,14 +2,13 @@ import cv2
 import constants
 from data_extractor.isolator import Isolator
 from tensorflow.python.keras.models import load_model
-import numpy as np
-import tensorflow as tf
 
 
 class Tester:
 
     def __init__(self):
-        self.model = load_model('../number_detection_model.h5')
+        model_path = "{}.h5".format(constants.MODEL_DIR)
+        self.model = load_model(model_path)
         self.model.summary()
 
         self.isolator = Isolator()
