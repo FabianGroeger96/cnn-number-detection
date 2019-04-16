@@ -1,6 +1,7 @@
 import pickle
 import tensorflow as tf
 import time
+import constants
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten, InputLayer
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
@@ -12,10 +13,6 @@ from tensorflow.python.keras.callbacks import TensorBoard
 class Trainer:
 
     def __init__(self):
-        self.BATCH_SIZE = 16
-        self.EPOCHS = 10
-        self.VALIDATION_SPLIT = 0.3
-
         self.model = None
         # specify learning rate for optimizer
         self.optimizer = Adam(lr=1e-3)
@@ -33,15 +30,6 @@ class Trainer:
         # first we normalize the data
         self._normalize_data()
 
-    def set_batch_size(self, batch_size):
-        self.BATCH_SIZE = batch_size
-
-    def set_epochs(self, epochs):
-        self.EPOCHS = epochs
-
-    def set_validation_split(self, validation_split):
-        self.VALIDATION_SPLIT = validation_split
-
     def _normalize_data(self):
         self.X = self.X / 255
 
@@ -57,7 +45,7 @@ class Trainer:
 
         # add model layers
         # 1. Layer
-        self.model.add(InputLayer(input_shape=[28, 28, 3])) # 3 because it is rgb, if gray: 1
+        self.model.add(InputLayer(input_shape=[constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION]))
         self.model.add(Conv2D(filters=32, kernel_size=3, strides=1, padding='same'))
         self.model.add(Activation(activation='relu'))
         self.model.add(MaxPooling2D(pool_size=3, padding='same'))
@@ -76,7 +64,7 @@ class Trainer:
         self.model.add(Flatten())
         self.model.add(Dense(512, activation='relu'))
         self.model.add(Dropout(rate=0.5))
-        self.model.add(Dense(11, activation='softmax'))
+        self.model.add(Dense(len(constants.CATEGORIES), activation='softmax'))
 
         self.model.compile(loss='categorical_crossentropy',
                       optimizer=self.optimizer,
@@ -96,7 +84,7 @@ class Trainer:
         self.model = Sequential()
 
         # add model layers
-        self.model.add(Conv2D(64, kernel_size=3, input_shape=(28, 28, 3)))
+        self.model.add(Conv2D(64, kernel_size=3, input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
         self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
@@ -108,7 +96,7 @@ class Trainer:
         self.model.add(Dense(64))
         self.model.add(Activation('relu'))
 
-        self.model.add(Dense(11))
+        self.model.add(Dense(len(constants.CATEGORIES)))
         self.model.add(Activation('softmax'))
 
         self.model.compile(loss='categorical_crossentropy',
@@ -133,7 +121,9 @@ class Trainer:
                     model = Sequential()
 
                     # add model layers
-                    model.add(Conv2D(layer_size, kernel_size=3, input_shape=(28, 28, 3)))
+                    model.add(Conv2D(layer_size,
+                                     kernel_size=3,
+                                     input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
                     model.add(Activation('relu'))
                     model.add(MaxPooling2D(pool_size=(2, 2)))
 
@@ -148,7 +138,7 @@ class Trainer:
                         model.add(Dense(layer_size))
                         model.add(Activation('relu'))
 
-                    model.add(Dense(11))
+                    model.add(Dense(len(constants.CATEGORIES)))
                     model.add(Activation('softmax'))
 
                     tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
@@ -158,18 +148,18 @@ class Trainer:
                                   metrics=['accuracy'],)
 
                     model.fit(self.X, self.y,
-                              batch_size=self.BATCH_SIZE,
-                              epochs=self.EPOCHS,
-                              validation_split=self.VALIDATION_SPLIT,
+                              batch_size=constants.BATCH_SIZE,
+                              epochs=constants.EPOCHS,
+                              validation_split=constants.VALIDATION_SPLIT,
                               callbacks=[tensorboard])
 
     def fit_model(self):
         print('[INFO] training model')
 
         self.model.fit(self.X, self.y,
-                       batch_size=self.BATCH_SIZE,
-                       epochs=self.EPOCHS,
-                       validation_split=self.VALIDATION_SPLIT,
+                       batch_size=constants.BATCH_SIZE,
+                       epochs=constants.EPOCHS,
+                       validation_split=constants.VALIDATION_SPLIT,
                        callbacks=[self.tensorboard])
 
     def save_model(self):
