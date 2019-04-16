@@ -1,6 +1,9 @@
 import pickle
 import time
 import constants
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
@@ -19,18 +22,20 @@ class Trainer:
         self.tensorboard = None
 
         pickle_in = open("../X.pickle", "rb")
-        self.X = pickle.load(pickle_in)
+        X = pickle.load(pickle_in)
+        # scale the raw pixel intensities to the range [0, 1]
+        X = X / 255
 
         pickle_in = open("../y.pickle", "rb")
-        self.y = pickle.load(pickle_in)
-        # one hot encode the labels
-        self.y = to_categorical(self.y)
+        y = pickle.load(pickle_in)
 
-        # first we normalize the data
-        self._normalize_data()
-
-    def _normalize_data(self):
-        self.X = self.X / 255
+        # train test split
+        (self.trainX, self.testX, self.trainY, self.testY) = train_test_split(X, y,
+                                                          test_size=constants.VALIDATION_SPLIT,
+                                                          random_state=42)
+        self.lb = LabelBinarizer()
+        self.trainY = self.lb.fit_transform(self.trainY)
+        self.testY = self.lb.transform(self.testY)
 
     def create_model_deep(self):
         # give the model a name for tensorboard
@@ -148,20 +153,24 @@ class Trainer:
                                   optimizer=self.optimizer,
                                   metrics=['accuracy'],)
 
-                    model.fit(self.X, self.y,
+                    model.fit(self.trainX, self.trainY,
+                              validation_data=(self.testX, self.testY),
                               batch_size=constants.BATCH_SIZE,
                               epochs=constants.EPOCHS,
-                              validation_split=constants.VALIDATION_SPLIT,
                               callbacks=[tensorboard])
 
     def fit_model(self):
         print('[INFO] training model')
-
-        self.model.fit(self.X, self.y,
+        self.model.fit(self.trainX, self.trainY,
+                       validation_data=(self.testX, self.testY),
                        batch_size=constants.BATCH_SIZE,
                        epochs=constants.EPOCHS,
-                       validation_split=constants.VALIDATION_SPLIT,
                        callbacks=[self.tensorboard])
+
+        print("[INFO] evaluating network")
+        predictions = self.model.predict(self.testX, batch_size=32)
+        print(classification_report(self.testY.argmax(axis=1),
+                                    predictions.argmax(axis=1), target_names=self.lb.classes_))
 
     def save_model(self):
         print('[INFO] saving model')

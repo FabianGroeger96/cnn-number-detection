@@ -96,7 +96,6 @@ class Extractor:
         for category in constants.CATEGORIES:
 
             category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
-            class_num = constants.CATEGORIES.index(category)
 
             list_category_dir = os.listdir(category_dir)
             list_category_dir = natsorted(list_category_dir)
@@ -110,7 +109,7 @@ class Extractor:
                     # resize to normalize data size
                     new_array = cv2.resize(img_array, (constants.IMG_SIZE, constants.IMG_SIZE))
                     # add image to our training data
-                    self.training_data.append([new_array, class_num])
+                    self.training_data.append([new_array, category])
                 # exceptions are ignored, to keep the output clean
                 except Exception as e:
                     pass
