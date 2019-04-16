@@ -7,17 +7,25 @@ def main():
     extractor = Extractor()
 
     # if you want to extract data from images
-    extract_data(extractor)
+    #extract_data(extractor)
+
+    # if you want to rename image names
+    #rename_data(extractor)
+
+    # if you need more data, invert image
+    #extractor.create_inverse_data("7")
 
     # if you want to create the data model for the cnn
-    #create_data_model(extractor)
+    create_data_model(extractor)
 
 
 def extract_data(extractor):
-    #print('[INFO] extracting regions of interest from data')
-    #sleep(.5)
-    #extractor.extract_data()
-    #sleep(.5)
+    print('[INFO] extracting regions of interest from data')
+    sleep(.5)
+    extractor.extract_data()
+
+
+def rename_data(extractor):
     print('[INFO] renaming images in categories')
     sleep(.5)
     extractor.rename_images_in_categories()
