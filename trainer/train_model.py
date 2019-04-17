@@ -8,6 +8,7 @@ def main():
     trainer.create_model_deep()
     trainer.fit_model()
     trainer.save_model()
+    trainer.convert_model_tensorflow()
 
     # trainer.create_model_light()
     # trainer.fit_model()

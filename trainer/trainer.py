@@ -1,6 +1,9 @@
 import pickle
 import time
 import constants
+import tensorflow as tf
+from keras import backend as K
+from tensorflow import keras
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -9,6 +12,7 @@ from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.keras.utils import to_categorical
+from tensorflow.python.framework.graph_util import convert_variables_to_constants
 from tensorflow.python.keras.callbacks import TensorBoard
 
 
@@ -174,8 +178,40 @@ class Trainer:
 
     def save_model(self):
         print('[INFO] saving model')
-
         model_path = "{}.h5".format(constants.MODEL_DIR)
         self.model.save(model_path)
-
         print('[INFO] successfully saved model to: ', model_path)
+
+    def convert_model_tensorflow(self):
+        print('[INFO] saving model for tensorflow')
+        model_output_path = '{}.pb'.format(constants.MODEL_DIR)
+        output_path_array = model_output_path.split('/')
+        output_path = ''
+        output_name = ''
+
+        for index, path in enumerate(output_path_array):
+            if index != len(output_path_array) - 1:
+                output_path = '{}{}/'.format(output_path, path)
+            else:
+                output_name = path
+
+        model_input_path = "{}.h5".format(constants.MODEL_DIR)
+        model = keras.models.load_model(model_input_path)
+
+        frozen_graph = self._convert_keras_to_tensorflow(keras.backend.get_session(),
+                                      output_names=[out.op.name for out in model.outputs])
+        tf.train.write_graph(frozen_graph, output_path, output_name, as_text=False)
+        print('[INFO] successfully saved model to: ', model_output_path)
+
+    def _convert_keras_to_tensorflow(self, session, keep_var_names=None, output_names=None, clear_devices=True):
+        graph = session.graph
+        with graph.as_default():
+            freeze_var_names = list(set(v.op.name for v in tf.global_variables()).difference(keep_var_names or []))
+            output_names = output_names or []
+            output_names += [v.op.name for v in tf.global_variables()]
+            input_graph_def = graph.as_graph_def()
+            if clear_devices:
+                for node in input_graph_def.node:
+                    node.device = ""
+            frozen_graph = convert_variables_to_constants(session, input_graph_def, output_names, freeze_var_names)
+            return frozen_graph
