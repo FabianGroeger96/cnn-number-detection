@@ -182,6 +182,9 @@ class Trainer:
         self.model.save(model_path)
         print('[INFO] successfully saved model to: ', model_path)
 
+    def convert_model_pytorch(self):
+        pass
+
     def convert_model_tensorflow(self):
         print('[INFO] saving model for tensorflow')
         model_output_path = '{}.pb'.format(constants.MODEL_DIR)
@@ -195,11 +198,13 @@ class Trainer:
             else:
                 output_name = path
 
+        keras.backend.set_learning_phase(0)
         model_input_path = "{}.h5".format(constants.MODEL_DIR)
         model = keras.models.load_model(model_input_path)
 
         frozen_graph = self._convert_keras_to_tensorflow(keras.backend.get_session(),
                                       output_names=[out.op.name for out in model.outputs])
+        tf.train.write_graph(keras.backend.get_session().graph_def, output_path, "graph.pbtxt", as_text=True)
         tf.train.write_graph(frozen_graph, output_path, output_name, as_text=False)
         print('[INFO] successfully saved model to: ', model_output_path)
 
