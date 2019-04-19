@@ -1,7 +1,7 @@
 import cv2
 import constants
 from data_extractor.isolator import Isolator
-from tensorflow.python.keras.models import load_model
+from g_net import load_model
 
 
 class Tester:
@@ -10,9 +10,6 @@ class Tester:
         model_path = "{}.h5".format(constants.MODEL_DIR)
         self.model = load_model(model_path)
         self.model.summary()
-
-        #model_path = "{}.pb".format(constants.MODEL_DIR)
-        #self.cv_model = cv2.dnn.readNet(model_path)
 
         self.isolator = Isolator()
 
