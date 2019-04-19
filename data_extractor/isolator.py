@@ -115,6 +115,18 @@ class Isolator:
             point_2_x = point_1_x + length
             point_2_y = point_1_y + height
 
+            if point_1_x < 0:
+                point_1_x = 0
+
+            if point_1_y < 0:
+                point_1_y = 0
+
+            if point_2_x < 0:
+                point_2_x
+
+            if point_2_y < 0:
+                point_2_y
+
             region_of_interest = image[point_1_y:point_2_y, point_1_x:point_2_x]
             regions_of_interest.append(region_of_interest)
             roi_coordinates.append([point_1_x, point_1_y, point_2_x, point_2_y])
