@@ -42,9 +42,10 @@ class Extractor:
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 regions_of_interest = self.isolator.get_regions_of_interest(image)
 
-                for index, roi in enumerate(regions_of_interest):
-                    roi_file_name = output_dir + "/{:s}_{:s}.jpg".format(image_name, str(index))
-                    cv2.imwrite(roi_file_name, roi)
+                for idx, image_type in enumerate(regions_of_interest):
+                    for index, roi in enumerate(image_type):
+                        roi_file_name = output_dir + "/{:s}_{:s}_{:s}.jpg".format(image_name, str(index), str(idx))
+                        cv2.imwrite(roi_file_name, roi)
             except:
                 continue
 

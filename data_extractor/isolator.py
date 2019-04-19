@@ -5,19 +5,29 @@ import cv2
 class Isolator:
 
     def get_regions_of_interest(self, image):
-        cropped_image = self._crop(image)
-        preprocessed_image = self._preprocess(cropped_image)
-        threshold_image = self._threshold(preprocessed_image)
-        contours = self._find_contours(threshold_image)
-        regions_of_interest, roi_coordinates = self._crop_regions_of_interest(cropped_image, contours)
+        regions_of_interest = []
+        regions_of_interest_coordinates = []
+        regions_of_interest_type = [] # 0: info, 1: stop
+
+        cropped_images = self._crop(image)
+        for index, cropped in enumerate(cropped_images):
+            preprocessed_image = self._preprocess(cropped)
+            threshold_image = self._threshold(preprocessed_image)
+            contours = self._find_contours(threshold_image)
+            rois, roi_coordinates = self._crop_regions_of_interest(cropped, contours)
+
+            if len(rois) > 0:
+                regions_of_interest.append(rois)
+                regions_of_interest_coordinates.append(roi_coordinates)
+                regions_of_interest_type.append(index)
 
         return regions_of_interest
 
     def _crop(self, image):
-        h, w, _ = image.shape
-        image = image[:, 0:int(w / 2), :]
+        image_info = image[100:280, 0:320, :]
+        image_stop = image[340:, 0:320, :]
 
-        return image
+        return [image_info, image_stop]
 
     def _detect_edges(self, channel):
         sobel_x = cv2.Sobel(channel, cv2.CV_16S, 1, 0)
@@ -37,7 +47,7 @@ class Isolator:
         # calculate mean of the image
         mean = np.mean(image)
         # everything that is below the mean of the image will be set to black
-        image[image <= mean + 30] = 0
+        image[image <= mean + 40] = 0
         # convert the image back to a numpy array
         image = np.asarray(image, np.uint8)
 
@@ -56,7 +66,7 @@ class Isolator:
             if (hierarchy[0][i][3] != -1 and hierarchy[0][i][2] == -1) or \
                     (hierarchy[0][i][3] == -1 and hierarchy[0][i][2] > 0) or \
                     (hierarchy[0][i][3] > 0 and hierarchy[0][i][2] > 0):
-                if 375 < cv2.contourArea(cnt) < 2500:
+                if 370 < cv2.contourArea(cnt) < 2500:
                     x, y, w, h = cv2.boundingRect(cnt)
                     if w < 55 and h < 100:
                         if 0.35 < w / h < 0.75:
