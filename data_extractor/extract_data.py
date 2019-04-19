@@ -10,13 +10,13 @@ def main():
     #extract_data(extractor)
 
     # if you want to rename image names
-    #rename_data(extractor)
+    rename_data(extractor)
 
     # if you need more data, invert image
     #extractor.create_inverse_data("7")
 
     # if you want to create the data model for the cnn
-    create_data_model(extractor)
+    #create_data_model(extractor)
 
 
 def extract_data(extractor):
