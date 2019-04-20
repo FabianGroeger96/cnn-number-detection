@@ -6,11 +6,11 @@ def main():
     # create an instance of the extractor
     extractor = Extractor()
 
+    # if you want to rename image names
+    rename_data(extractor)
+
     # if you want to extract data from images
     extract_data(extractor)
-
-    # if you want to rename image names
-    #rename_data(extractor)
 
     # if you need more data, invert image
     #extractor.create_inverse_data("7")

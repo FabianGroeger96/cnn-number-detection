@@ -45,7 +45,7 @@ class Extractor:
                 for idx, roi_type in enumerate(regions_of_interest):
                     for index, roi in enumerate(roi_type):
                         image_type = regions_of_interest_type[idx][index]
-                        roi_file_name = output_dir + "/{:s}_{:s}_{:s}.jpg".format(image_name, str(index), image_type)
+                        roi_file_name = output_dir + "/{:s}_{:s}_{:s}.jpg".format(image_name, str(index), str(image_type))
                         cv2.imwrite(roi_file_name, roi)
             except:
                 continue
