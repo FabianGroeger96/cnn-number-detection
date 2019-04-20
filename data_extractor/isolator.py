@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import constants
 
 
 class Isolator:
@@ -45,12 +46,18 @@ class Isolator:
         return sobel
 
     def _preprocess(self, image):
-        # create gradient image from all 3 color channels
-        # calculate gradient for channels and put it back together
-        image = np.max(np.array(
-            [self._detect_edges(image[:, :, 0]),
-             self._detect_edges(image[:, :, 1]),
-             self._detect_edges(image[:, :, 2])]), axis=0)
+        if constants.GRADIENT_FROM_RGB:
+            # create gradient image from all 3 color channels
+            # calculate gradient for channels and put it back together
+            image = np.max(np.array(
+                [self._detect_edges(image[:, :, 0]),
+                 self._detect_edges(image[:, :, 1]),
+                 self._detect_edges(image[:, :, 2])]), axis=0)
+        else:
+            # create gradient image from grayscale image
+            # for better performance (only 1 channel)
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            image = self._detect_edges(image)
         # calculate mean of the image
         mean = np.mean(image)
         # everything that is below the mean of the image will be set to black

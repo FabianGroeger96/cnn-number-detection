@@ -9,6 +9,8 @@ IMG_SIZE = 28
 USE_GRAYSCALE = True
 DIMENSION = 1
 
+GRADIENT_FROM_RGB = False
+
 SIGNAL_TYPES = ["info", "stop"]
 
 BATCH_SIZE = 32
