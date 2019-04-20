@@ -8,6 +8,7 @@ import constants
 from natsort import natsorted
 from tqdm import tqdm
 from data_extractor.isolator import Isolator
+from tester.g_net import load_model
 
 
 class Extractor:
@@ -137,4 +138,37 @@ class Extractor:
         pickle_out.close()
 
         print('[INFO] saved data model to root directory')
+
+    def categorize_with_trained_model(self):
+        model_path = "{}.h5".format(constants.MODEL_DIR)
+        model = load_model(model_path)
+
+        extracted_data_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR)
+
+        list_data_dir = os.listdir(extracted_data_dir)
+        list_data_dir = natsorted(list_data_dir)
+
+        for img in tqdm(list_data_dir):
+            try:
+                image_path = os.path.join(extracted_data_dir, img)
+                img_array = cv2.imread(image_path)
+                if img_array is not None:
+                    if constants.USE_GRAYSCALE:
+                        image_array = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+                    resized_image_array = cv2.resize(image_array, (constants.IMG_SIZE, constants.IMG_SIZE))
+                    reshaped_image = resized_image_array.reshape(-1, constants.IMG_SIZE, constants.IMG_SIZE,
+                                                                 constants.DIMENSION)
+                    prediction = model.predict([reshaped_image])
+
+                    i = prediction.argmax(axis=1)[0]
+                    label = constants.CATEGORIES[i]
+
+                    if prediction[0][i] > 0.9:
+                        os.remove(image_path)
+                        image_path = os.path.join(extracted_data_dir, label, img)
+                        cv2.imwrite(image_path, image_array)
+
+            # exceptions are ignored, to keep the output clean
+            except Exception as e:
+                pass
 
