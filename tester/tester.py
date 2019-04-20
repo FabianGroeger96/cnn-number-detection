@@ -24,17 +24,21 @@ class Tester:
     def test_model(self, image_path):
         image_array = cv2.imread(image_path)
         image_array = cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB)
-        regions_of_interest = self.isolator.get_regions_of_interest(image_array)
+        regions_of_interest, regions_of_interest_type = self.isolator.get_regions_of_interest(image_array)
 
-        for index, roi in enumerate(regions_of_interest):
-            roi_processed = self._preprocess_image(roi)
-            prediction = self.model.predict([roi_processed])
+        for idx, roi_type in enumerate(regions_of_interest):
+            for index, roi in enumerate(roi_type):
+                image_type = regions_of_interest_type[idx][index]
 
-            i = prediction.argmax(axis=1)[0]
-            label = constants.CATEGORIES[i]
+                roi_processed = self._preprocess_image(roi)
+                prediction = self.model.predict([roi_processed])
 
-            print(prediction)
-            print('Prediction roi {}: {}, {:.2f}%'.format(str(index), label, prediction[0][i] * 100))
+                i = prediction.argmax(axis=1)[0]
+                label = constants.CATEGORIES[i]
 
-            cv2.imshow("ROI", roi)
-            cv2.waitKey(0)
+                print('Prediction: image type: {}, {} ({:.2f}%)'.format(constants.SIGNAL_TYPES[image_type],
+                                                                        label,
+                                                                        prediction[0][i] * 100))
+
+                cv2.imshow("ROI", roi)
+                cv2.waitKey(0)

@@ -6,7 +6,6 @@ class Isolator:
 
     def get_regions_of_interest(self, image):
         regions_of_interest = []
-        regions_of_interest_coordinates = []
         regions_of_interest_type = [] # 0: info, 1: stop
 
         cropped_images = self._crop(image)
@@ -14,14 +13,22 @@ class Isolator:
             preprocessed_image = self._preprocess(cropped)
             threshold_image = self._threshold(preprocessed_image)
             contours = self._find_contours(threshold_image)
-            rois, roi_coordinates = self._crop_regions_of_interest(cropped, contours)
+            rois = self._crop_regions_of_interest(cropped, contours)
 
-            if len(rois) > 0:
-                regions_of_interest.append(rois)
-                regions_of_interest_coordinates.append(roi_coordinates)
-                regions_of_interest_type.append(index)
+            roi_arr = []
+            roi_type_arr = []
 
-        return regions_of_interest
+            for roi in rois:
+                roi_arr.append(roi)
+                roi_type_arr.append(index)
+
+            if len(roi_arr) > 0:
+                regions_of_interest.append(roi_arr)
+                regions_of_interest_type.append(roi_type_arr)
+            else:
+                regions_of_interest_type.append([])
+
+        return regions_of_interest, regions_of_interest_type
 
     def _crop(self, image):
         image_info = image[100:280, 0:320, :]
@@ -103,7 +110,6 @@ class Isolator:
 
     def _crop_regions_of_interest(self, image, contours):
         regions_of_interest = []
-        roi_coordinates = []
         for contour in contours:
             x, y, w, h = cv2.boundingRect(contour)
 
@@ -129,7 +135,6 @@ class Isolator:
 
             region_of_interest = image[point_1_y:point_2_y, point_1_x:point_2_x]
             regions_of_interest.append(region_of_interest)
-            roi_coordinates.append([point_1_x, point_1_y, point_2_x, point_2_y])
 
-        return regions_of_interest, roi_coordinates
+        return regions_of_interest
 
