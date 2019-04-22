@@ -27,6 +27,7 @@ class Isolator:
                 regions_of_interest.append(roi_arr)
                 regions_of_interest_type.append(roi_type_arr)
             else:
+                regions_of_interest.append([])
                 regions_of_interest_type.append([])
 
         return regions_of_interest, regions_of_interest_type

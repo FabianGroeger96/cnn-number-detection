@@ -7,13 +7,13 @@ def main():
     extractor = Extractor()
 
     # if you want to rename image names
-    #rename_data(extractor)
+    rename_data(extractor)
 
     # if you want to extract data from images
-    #extract_data(extractor)
+    extract_data(extractor)
 
     # if you want to categorize images with model
-    extractor.categorize_with_trained_model()
+    #categorize_data(extractor)
 
     # if you need more data, invert image
     #extractor.create_inverse_data("7")
@@ -32,6 +32,12 @@ def rename_data(extractor):
     print('[INFO] renaming images in categories')
     sleep(.5)
     extractor.rename_images_in_categories()
+
+
+def categorize_data(extractor):
+    print('[INFO] categorizing images')
+    sleep(.5)
+    extractor.categorize_with_trained_model()
 
 
 def create_data_model(extractor):

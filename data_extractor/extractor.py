@@ -48,8 +48,9 @@ class Extractor:
                         image_type = regions_of_interest_type[idx][index]
                         roi_file_name = output_dir + "/{:s}_{:s}_{:s}.jpg".format(image_name, str(index), str(image_type))
                         cv2.imwrite(roi_file_name, roi)
-            except:
-                continue
+
+            except Exception as e:
+                print(e)
 
         print('[INFO] creating folders for sorting rois in categories')
         for category in constants.CATEGORIES:
@@ -163,7 +164,7 @@ class Extractor:
                     i = prediction.argmax(axis=1)[0]
                     label = constants.CATEGORIES[i]
 
-                    if prediction[0][i] > 0.9:
+                    if prediction[0][i] > 0.95:
                         os.remove(image_path)
                         image_path = os.path.join(extracted_data_dir, label, img)
                         cv2.imwrite(image_path, image_array)
