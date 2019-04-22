@@ -103,8 +103,8 @@ class Trainer:
 
         self.model.add(Dropout(rate=0.5))
         self.model.add(Flatten())
-        self.model.add(Dense(64))
-        self.model.add(Activation('relu'))
+        #self.model.add(Dense(64))
+        #self.model.add(Activation('relu'))
 
         self.model.add(Dense(len(constants.CATEGORIES)))
         self.model.add(Activation('softmax'))

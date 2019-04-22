@@ -1,7 +1,7 @@
 import cv2
 import constants
 from data_extractor.isolator import Isolator
-from g_net import load_model
+from tensorflow.python.keras.models import load_model
 
 
 class Tester:
