@@ -1,7 +1,7 @@
 import cv2
 import constants
 from data_extractor.isolator import Isolator
-from tensorflow.python.keras.models import load_model
+from g_net import load_model
 
 
 class Tester:
@@ -24,21 +24,21 @@ class Tester:
     def test_model(self, image_path):
         image_array = cv2.imread(image_path)
         image_array = cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB)
-        regions_of_interest, regions_of_interest_type = self.isolator.get_regions_of_interest(image_array)
+        regions_of_interest = self.isolator.get_regions_of_interest(image_array)
 
-        for idx, roi_type in enumerate(regions_of_interest):
-            for index, roi in enumerate(roi_type):
-                image_type = regions_of_interest_type[idx][index]
+        for index, roi_arr in enumerate(regions_of_interest):
+            roi = roi_arr[0]
+            roi_type = roi_arr[1]
 
-                roi_processed = self._preprocess_image(roi)
-                prediction = self.model.predict([roi_processed])
+            roi_processed = self._preprocess_image(roi)
+            prediction = self.model.predict([roi_processed])
 
-                i = prediction.argmax(axis=1)[0]
-                label = constants.CATEGORIES[i]
+            i = prediction.argmax(axis=1)[0]
+            label = constants.CATEGORIES[i]
 
-                print('Prediction: image type: {}, {} ({:.2f}%)'.format(constants.SIGNAL_TYPES[image_type],
-                                                                        label,
-                                                                        prediction[0][i] * 100))
+            print('Prediction: image type: {}, {} ({:.2f}%)'.format(constants.SIGNAL_TYPES[roi_type],
+                                                                    label,
+                                                                    prediction[0][i] * 100))
 
-                cv2.imshow("ROI", roi)
-                cv2.waitKey(0)
+            cv2.imshow("ROI", roi)
+            cv2.waitKey(0)

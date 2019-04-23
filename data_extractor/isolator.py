@@ -6,8 +6,7 @@ import constants
 class Isolator:
 
     def get_regions_of_interest(self, image):
-        regions_of_interest = []
-        regions_of_interest_type = [] # 0: info, 1: stop
+        regions_of_interest = [] # 0: roi, 1: type
 
         cropped_images = self._crop(image)
         for index, cropped in enumerate(cropped_images):
@@ -16,21 +15,13 @@ class Isolator:
             contours = self._find_contours(threshold_image)
             rois = self._crop_regions_of_interest(cropped, contours)
 
-            roi_arr = []
-            roi_type_arr = []
-
             for roi in rois:
+                roi_arr = []
                 roi_arr.append(roi)
-                roi_type_arr.append(index)
-
-            if len(roi_arr) > 0:
+                roi_arr.append(index)
                 regions_of_interest.append(roi_arr)
-                regions_of_interest_type.append(roi_type_arr)
-            else:
-                regions_of_interest.append([])
-                regions_of_interest_type.append([])
 
-        return regions_of_interest, regions_of_interest_type
+        return regions_of_interest
 
     def _crop(self, image):
         image_info = image[100:280, 0:320, :]
