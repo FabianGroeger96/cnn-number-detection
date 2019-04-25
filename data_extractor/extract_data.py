@@ -10,7 +10,7 @@ def main():
     #rename_data(extractor)
 
     # if you want to extract data from images
-    #extract_data(extractor)
+    extract_data(extractor)
 
     # if you want to categorize images with model
     #categorize_data(extractor)
@@ -19,7 +19,7 @@ def main():
     #extractor.create_inverse_data("7")
 
     # if you want to create the data model for the cnn
-    create_data_model(extractor)
+    #create_data_model(extractor)
 
 
 def extract_data(extractor):
