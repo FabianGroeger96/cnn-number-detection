@@ -23,3 +23,9 @@ the `CATEGORIES` variable
 5. After the method is finished your extracted regions of interest are located in the 
 `data_extracted` folder. In there you will also find folders for each of your categories.
 These folders are used to label the regions of interest for then training your CNN.
+
+### Label the Data
+
+1. First of all you will have to extract the regions of interest with the DataExtractor
+2. Classify the images, by dragging them in the corresponding category folder
+3. Run the `extract_data.py` file and call the method `rename_data`
