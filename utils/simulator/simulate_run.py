@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 from tqdm import tqdm
-from data_extractor.isolator import Isolator
+from utils.isolator.isolator import Isolator
 
 
 def classifyForSignal(image):

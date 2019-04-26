@@ -1,6 +1,6 @@
 import cv2
 import constants
-from data_extractor.isolator import Isolator
+from utils.isolator.isolator import Isolator
 from g_net import load_model
 
 

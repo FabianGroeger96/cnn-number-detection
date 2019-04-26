@@ -7,7 +7,7 @@ import constants
 
 from natsort import natsorted
 from tqdm import tqdm
-from data_extractor.isolator import Isolator
+from utils.isolator.isolator import Isolator
 from tester.g_net import load_model
 
 
