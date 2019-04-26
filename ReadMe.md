@@ -10,6 +10,8 @@ The goal of this repository is to create a custom CNN to detect number from 0-9 
 - Trainer (to train the model)
 - Tester (to test the model on custom images)
 
+## Usage
+
 ### Extract data with DataExtractor
 
 1. Create a folder named `images_to_extract` in the data extractor directory 
