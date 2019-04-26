@@ -23,6 +23,29 @@ class Isolator:
 
         return regions_of_interest
 
+    def get_contours(self, image):
+        contours_signal_type = []  # 0: roi, 1: type
+
+        cropped_images = self._crop(image)
+        for index, cropped in enumerate(cropped_images):
+            preprocessed_image = self._preprocess(cropped)
+            threshold_image = self._threshold(preprocessed_image)
+            contours = self._find_contours(threshold_image)
+
+            if len(contours) > 0:
+                for c in contours:
+                    contour_arr = []
+                    contour_arr.append(c)
+                    contour_arr.append(cropped)
+                    contours_signal_type.append(contour_arr)
+            else:
+                contour_arr = []
+                contour_arr.append(None)
+                contour_arr.append(cropped)
+                contours_signal_type.append(contour_arr)
+
+        return contours_signal_type
+
     def _crop(self, image):
         image_info = image[100:280, 0:320, :]
         image_stop = image[340:, 0:320, :]
@@ -53,7 +76,7 @@ class Isolator:
         # calculate mean of the image
         mean = np.mean(image)
         # everything that is below the mean of the image will be set to black
-        image[image <= mean + 40] = 0
+        image[image <= mean + 10] = 0
         # convert the image back to a numpy array
         image = np.asarray(image, np.uint8)
 

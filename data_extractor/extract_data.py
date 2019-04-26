@@ -7,10 +7,10 @@ def main():
     extractor = Extractor()
 
     # if you want to rename image names
-    #rename_data(extractor)
+    rename_data(extractor)
 
     # if you want to extract data from images
-    extract_data(extractor)
+    #extract_data(extractor)
 
     # if you want to categorize images with model
     #categorize_data(extractor)
