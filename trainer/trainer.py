@@ -2,7 +2,6 @@ import pickle
 import time
 import constants
 import tensorflow as tf
-from keras import backend as K
 from tensorflow import keras
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
@@ -11,7 +10,6 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras.optimizers import Adam
-from tensorflow.python.keras.utils import to_categorical
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
 from tensorflow.python.keras.callbacks import TensorBoard
 
@@ -103,8 +101,38 @@ class Trainer:
 
         self.model.add(Dropout(rate=0.5))
         self.model.add(Flatten())
-        #self.model.add(Dense(64))
-        #self.model.add(Activation('relu'))
+
+        self.model.add(Dense(len(constants.CATEGORIES)))
+        self.model.add(Activation('softmax'))
+
+        self.model.compile(loss='categorical_crossentropy',
+                           optimizer=self.optimizer,
+                           metrics=['accuracy'])
+
+        # display summary of the created model
+        self.model.summary()
+
+    def create_model_light_v2(self):
+        # give the model a name for tensorboard
+        NAME = 'CNN-number-detection-lightnet-v2'
+        self.tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+
+        print('[INFO] creating model: ', NAME)
+
+        # create model
+        self.model = Sequential()
+
+        # add model layers
+        self.model.add(Conv2D(16, kernel_size=3,
+                              strides=(2, 2),
+                              input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
+        self.model.add(Activation('relu'))
+
+        self.model.add(Conv2D(32, kernel_size=3, strides=(2, 2)))
+        self.model.add(Activation('relu'))
+
+        self.model.add(Dropout(rate=0.5))
+        self.model.add(Flatten())
 
         self.model.add(Dense(len(constants.CATEGORIES)))
         self.model.add(Activation('softmax'))
