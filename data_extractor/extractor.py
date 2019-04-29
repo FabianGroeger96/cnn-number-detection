@@ -9,12 +9,23 @@ from natsort import natsorted
 from tqdm import tqdm
 from utils.isolator.isolator import Isolator
 from tester.g_net import load_model
+from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 
 
 class Extractor:
 
     def __init__(self):
         os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
+        self.image_data_gen = ImageDataGenerator(
+            rotation_range=40,
+            width_shift_range=0.2,
+            height_shift_range=0.2,
+            rescale=1./255,
+            shear_range=0.2,
+            zoom_range=0.2,
+            horizontal_flip=True,
+            fill_mode='nearest')
 
         self.isolator = Isolator()
         self.current_working_dir = os.getcwd()
@@ -174,3 +185,24 @@ class Extractor:
             except Exception as e:
                 pass
 
+    def generate_data(self):
+        for category in constants.CATEGORIES:
+
+            category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
+
+            list_category_dir = os.listdir(category_dir)
+            list_category_dir = natsorted(list_category_dir)
+
+            for img in tqdm(list_category_dir):
+                img_array = cv2.imread(os.path.join(category_dir, img))
+                if img_array is not None:
+                    img_array = img_array.reshape((1,) + img_array.shape)
+
+                    # the .flow() command below generates batches of randomly transformed images
+                    # and saves the results to the `preview/` directory
+                    for index, batch in enumerate(self.image_data_gen.flow(img_array, batch_size=1, save_format='jpeg')):
+                        image_name = "{:s}_{:s}_aug.jpg".format(img, str(index))
+                        image_path = os.path.join(category_dir, image_name)
+                        cv2.imwrite(image_path, batch.reshape(3, 28, 28))
+                        if index > 20:
+                            break

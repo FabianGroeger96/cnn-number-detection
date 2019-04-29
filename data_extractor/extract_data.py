@@ -7,7 +7,7 @@ def main():
     extractor = Extractor()
 
     # if you want to rename image names
-    rename_data(extractor)
+    #rename_data(extractor)
 
     # if you want to extract data from images
     #extract_data(extractor)
@@ -20,6 +20,9 @@ def main():
 
     # if you want to create the data model for the cnn
     #create_data_model(extractor)
+
+    # if you want to generate more data with data augmentation
+    generate_data(extractor)
 
 
 def extract_data(extractor):
@@ -48,6 +51,12 @@ def create_data_model(extractor):
     print('[INFO] creating data model')
     sleep(.5)
     extractor.create_model()
+
+
+def generate_data(extractor):
+    print('[INFO] generating data')
+    sleep(.5)
+    extractor.generate_data()
 
 
 if __name__ == "__main__":
