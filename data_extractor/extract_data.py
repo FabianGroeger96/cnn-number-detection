@@ -56,7 +56,7 @@ def create_data_model(extractor):
 def generate_data(extractor):
     print('[INFO] generating data')
     sleep(.5)
-    extractor.generate_data()
+    extractor.augment_all_categories()
 
 
 if __name__ == "__main__":

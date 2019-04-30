@@ -10,6 +10,7 @@ from tqdm import tqdm
 from utils.isolator.isolator import Isolator
 from tester.g_net import load_model
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.python.keras.preprocessing.image import array_to_img, img_to_array, load_img
 
 
 class Extractor:
@@ -185,24 +186,36 @@ class Extractor:
             except Exception as e:
                 pass
 
-    def generate_data(self):
+    def augment_all_categories(self):
+        # loop through all categories
         for category in constants.CATEGORIES:
+            self.augment_category(category)
 
-            category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
-
-            list_category_dir = os.listdir(category_dir)
-            list_category_dir = natsorted(list_category_dir)
-
-            for img in tqdm(list_category_dir):
-                img_array = cv2.imread(os.path.join(category_dir, img))
-                if img_array is not None:
-                    img_array = img_array.reshape((1,) + img_array.shape)
-
-                    # the .flow() command below generates batches of randomly transformed images
-                    # and saves the results to the `preview/` directory
-                    for index, batch in enumerate(self.image_data_gen.flow(img_array, batch_size=1, save_format='jpeg')):
-                        image_name = "{:s}_{:s}_aug.jpg".format(img, str(index))
-                        image_path = os.path.join(category_dir, image_name)
-                        cv2.imwrite(image_path, batch.reshape(3, 28, 28))
-                        if index > 20:
-                            break
+    def augment_category(self, category):
+        # create the input path for category
+        category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
+        # searches files in category dir
+        list_category_dir = os.listdir(category_dir)
+        list_category_dir = natsorted(list_category_dir)
+        # loops through all files in path
+        for img in tqdm(list_category_dir):
+            image_path = os.path.join(category_dir, img)
+            # load image to array
+            image = load_img(image_path)
+            if image is not None:
+                # convert image to array
+                image = img_to_array(image)
+                # reshape to array rank 4
+                image = image.reshape((1,) + image.shape)
+                # create infinite flow of images
+                images_flow = self.image_data_gen.flow(image, batch_size=1)
+                for i, new_images in enumerate(images_flow):
+                    # we access only first image because of batch_size=1
+                    new_image = array_to_img(new_images[0], scale=True)
+                    # save the augmented image
+                    image_name = "{:s}_{:s}_aug.jpg".format(img, str(i))
+                    image_path = os.path.join(category_dir, image_name)
+                    new_image.save(image_path)
+                    # break infinite loop after generated 10 images
+                    if i >= 10:
+                        break
