@@ -139,13 +139,14 @@ class Extractor:
             for img in tqdm(list_category_dir):
                 try:
                     img_array = cv2.imread(os.path.join(category_dir, img))
-                    # convert image to grayscale if parameter is set in constants file
-                    if constants.USE_GRAYSCALE:
-                        img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
-                    # resize to normalize data size
-                    new_array = cv2.resize(img_array, (constants.IMG_SIZE, constants.IMG_SIZE))
-                    # add image to our training data
-                    self.training_data.append([new_array, category])
+                    if img_array is not None:
+                        # convert image to grayscale if parameter is set in constants file
+                        if constants.USE_GRAYSCALE:
+                            img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
+                        # resize to normalize data size
+                        new_array = cv2.resize(img_array, (constants.IMG_SIZE, constants.IMG_SIZE))
+                        # add image to our training data
+                        self.training_data.append([new_array, category])
                 # exceptions are ignored, to keep the output clean
                 except Exception as e:
                     pass
