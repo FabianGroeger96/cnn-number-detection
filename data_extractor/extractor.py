@@ -1,9 +1,12 @@
 import os
+import time
+
 import cv2
 import random
 import numpy as np
 import pickle
 import constants
+import random
 
 from natsort import natsorted
 from tqdm import tqdm
@@ -19,14 +22,13 @@ class Extractor:
         os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
         self.image_data_gen = ImageDataGenerator(
-            rotation_range=40,
-            width_shift_range=0.2,
-            height_shift_range=0.2,
-            rescale=1./255,
+            rotation_range=15,
+            width_shift_range=0.1,
+            height_shift_range=0.1,
             shear_range=0.2,
-            zoom_range=0.2,
-            horizontal_flip=True,
-            fill_mode='nearest')
+            zoom_range=[0.8, 1.1],
+            brightness_range=[0.5, 1.5],
+            fill_mode='reflect')
 
         self.isolator = Isolator()
         self.current_working_dir = os.getcwd()
@@ -34,6 +36,8 @@ class Extractor:
         self.training_data = []
 
     def extract_data(self):
+        print('[INFO] extracting regions of interest from data')
+
         input_dir = os.path.join(self.current_working_dir, constants.INPUT_DATA_DIR)
         print('[INFO] Input directory: ', input_dir)
 
@@ -72,6 +76,7 @@ class Extractor:
                 os.makedirs(category_dir)
 
     def rename_images_in_categories(self):
+        print('[INFO] renaming images in categories')
         for category in constants.CATEGORIES:
             category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
 
@@ -88,9 +93,21 @@ class Extractor:
 
                     image_name = "{:s}.jpg".format(str(index))
                     image_path = os.path.join(category_dir, image_name)
-                    cv2.imwrite(image_path, image_array)
+                    if not os.path.exists(image_path):
+                        cv2.imwrite(image_path, image_array)
+                    else:
+                        i = index
+                        while True:
+                            i += 1
+                            image_name = "{:s}.jpg".format(str(i))
+                            image_path = os.path.join(category_dir, image_name)
+                            if not os.path.exists(image_path):
+                                cv2.imwrite(image_path, image_array)
+                                break
 
     def create_inverse_data(self, category):
+        print('[INFO] creating inverse data in category {}'.format(category))
+
         category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
 
         list_category_dir = os.listdir(category_dir)
@@ -109,6 +126,8 @@ class Extractor:
                 cv2.imwrite(image_path, image_inv)
 
     def create_training_data(self):
+        print('[INFO] creating training data')
+
         self.training_data.clear()
         for category in constants.CATEGORIES:
 
@@ -133,7 +152,11 @@ class Extractor:
 
         random.shuffle(self.training_data)
 
-    def create_model(self):
+        self._create_model()
+
+    def _create_model(self):
+        print('[INFO] creating data model')
+
         X = []
         y = []
 
@@ -154,6 +177,8 @@ class Extractor:
         print('[INFO] saved data model to root directory')
 
     def categorize_with_trained_model(self):
+        print('[INFO] categorizing images')
+
         model_path = "{}.h5".format(constants.MODEL_DIR)
         model = load_model(model_path)
 
@@ -186,12 +211,43 @@ class Extractor:
             except Exception as e:
                 pass
 
+    def randomly_delete_images(self, count_files_after_delete):
+        print('[INFO] randomly deleting images from categories')
+
+        for category in constants.CATEGORIES:
+            category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
+
+            list_category_dir = os.listdir(category_dir)
+            count_delete = len(list_category_dir) - count_files_after_delete
+
+            if count_delete > 0:
+
+                print('[INFO] deleting {} images in category {}'.format(count_delete, category))
+
+                for i in range(0, count_delete - 1):
+                    while True:
+                        chosen_image = random.choice(list_category_dir)
+
+                        image_path = os.path.join(category_dir, chosen_image)
+                        image_array = cv2.imread(image_path)
+
+                        if image_array is not None:
+                            # remove the loaded image
+                            os.remove(image_path)
+                            break
+
+        self.rename_images_in_categories()
+
     def augment_all_categories(self):
+        print('[INFO] generating data')
         # loop through all categories
         for category in constants.CATEGORIES:
             self.augment_category(category)
 
     def augment_category(self, category):
+        time.sleep(.5)
+        print('[INFO] augmenting images in category {}'.format(category))
+        time.sleep(.5)
         # create the input path for category
         category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
         # searches files in category dir
@@ -199,23 +255,24 @@ class Extractor:
         list_category_dir = natsorted(list_category_dir)
         # loops through all files in path
         for img in tqdm(list_category_dir):
-            image_path = os.path.join(category_dir, img)
-            # load image to array
-            image = load_img(image_path)
-            if image is not None:
-                # convert image to array
-                image = img_to_array(image)
-                # reshape to array rank 4
-                image = image.reshape((1,) + image.shape)
-                # create infinite flow of images
-                images_flow = self.image_data_gen.flow(image, batch_size=1)
-                for i, new_images in enumerate(images_flow):
-                    # we access only first image because of batch_size=1
-                    new_image = array_to_img(new_images[0], scale=True)
-                    # save the augmented image
-                    image_name = "{:s}_{:s}_aug.jpg".format(img, str(i))
-                    image_path = os.path.join(category_dir, image_name)
-                    new_image.save(image_path)
-                    # break infinite loop after generated 10 images
-                    if i >= 10:
-                        break
+            if '.jpg' in img or '.png' in img:
+                image_path = os.path.join(category_dir, img)
+                # load image to array
+                image = load_img(image_path)
+                if image is not None:
+                    # convert image to array
+                    image = img_to_array(image)
+                    # reshape to array rank 4
+                    image = image.reshape((1,) + image.shape)
+                    # create infinite flow of images
+                    images_flow = self.image_data_gen.flow(image, batch_size=1)
+                    for i, new_images in enumerate(images_flow):
+                        # we access only first image because of batch_size=1
+                        new_image = array_to_img(new_images[0], scale=True)
+                        # save the augmented image
+                        image_name = "{:s}_{:s}_aug.jpg".format(img, str(i))
+                        image_path = os.path.join(category_dir, image_name)
+                        new_image.save(image_path)
+                        # break infinite loop after generated 10 images
+                        if i >= 10:
+                            break

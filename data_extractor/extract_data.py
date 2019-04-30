@@ -7,56 +7,25 @@ def main():
     extractor = Extractor()
 
     # if you want to rename image names
-    #rename_data(extractor)
+    #extractor.rename_images_in_categories()
 
     # if you want to extract data from images
-    #extract_data(extractor)
+    #extractor.extract_data()
 
     # if you want to categorize images with model
-    #categorize_data(extractor)
+    #extractor.categorize_with_trained_model()
+
+    # if you want to generate more data with data augmentation
+    # extractor.augment_all_categories()
 
     # if you need more data, invert image
     #extractor.create_inverse_data("7")
 
     # if you want to create the data model for the cnn
-    #create_data_model(extractor)
+    #extractor.create_training_data()
 
-    # if you want to generate more data with data augmentation
-    generate_data(extractor)
-
-
-def extract_data(extractor):
-    print('[INFO] extracting regions of interest from data')
-    sleep(.5)
-    extractor.extract_data()
-
-
-def rename_data(extractor):
-    print('[INFO] renaming images in categories')
-    sleep(.5)
-    extractor.rename_images_in_categories()
-
-
-def categorize_data(extractor):
-    print('[INFO] categorizing images')
-    sleep(.5)
-    extractor.categorize_with_trained_model()
-
-
-def create_data_model(extractor):
-    print('[INFO] creating training data')
-    sleep(.5)
-    extractor.create_training_data()
-    sleep(.5)
-    print('[INFO] creating data model')
-    sleep(.5)
-    extractor.create_model()
-
-
-def generate_data(extractor):
-    print('[INFO] generating data')
-    sleep(.5)
-    extractor.augment_all_categories()
+    # if you want to randomly delete images, so that all categories have the same amount of images
+    #extractor.randomly_delete_images(200)
 
 
 if __name__ == "__main__":
