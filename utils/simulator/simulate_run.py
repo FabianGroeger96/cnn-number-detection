@@ -1,5 +1,6 @@
 import os
 import cv2
+import shutil
 import numpy as np
 from tqdm import tqdm
 from utils.isolator.isolator import Isolator
@@ -17,7 +18,7 @@ def classifyForSignal(image):
 
         draw_image = np.copy(contour_image)
         if contour is not None:
-            cv2.drawContours(draw_image, contour, -1, (255, 0, 0), 2)
+            cv2.drawContours(draw_image, contour, -1, (255, 153, 255), 1)
 
         contour_images.append(draw_image)
 
@@ -40,6 +41,9 @@ for f in listdir:
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
+erun_path = os.path.join(currentWorkingDir, 'continous/erun')
+if os.path.exists(erun_path):
+    shutil.rmtree(erun_path, ignore_errors=True)
 os.makedirs(currentWorkingDir + "/continous/erun/original")
 os.makedirs(currentWorkingDir + "/continous/erun/contours")
 

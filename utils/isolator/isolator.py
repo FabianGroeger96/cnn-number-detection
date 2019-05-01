@@ -32,12 +32,12 @@ class Isolator:
             threshold_image = self._threshold(preprocessed_image)
             contours = self._find_contours(threshold_image)
 
+            # TODO - refactor list!
             if len(contours) > 0:
-                for c in contours:
-                    contour_arr = []
-                    contour_arr.append(c)
-                    contour_arr.append(cropped)
-                    contours_signal_type.append(contour_arr)
+                contour_arr = []
+                contour_arr.append(contours)
+                contour_arr.append(cropped)
+                contours_signal_type.append(contour_arr)
             else:
                 contour_arr = []
                 contour_arr.append(None)
@@ -47,8 +47,13 @@ class Isolator:
         return contours_signal_type
 
     def _crop(self, image):
-        image_info = image[100:280, 0:320, :]
-        image_stop = image[340:, 0:320, :]
+        if constants.CAMERA_POSITION is 0:
+            image_info = image[80:220, 0:340, :]
+            image_stop = image[280:420, 0:340, :]
+
+        elif constants.CAMERA_POSITION is 1:
+            image_info = image[140:280, 0:320, :]
+            image_stop = image[340:, 0:320, :]
 
         return [image_info, image_stop]
 
@@ -76,7 +81,7 @@ class Isolator:
         # calculate mean of the image
         mean = np.mean(image)
         # everything that is below the mean of the image will be set to black
-        image[image <= mean + 10] = 0
+        image[image <= mean + 30] = 0
         # convert the image back to a numpy array
         image = np.asarray(image, np.uint8)
 
