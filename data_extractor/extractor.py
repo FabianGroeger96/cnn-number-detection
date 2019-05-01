@@ -1,8 +1,6 @@
 import os
 import time
-
 import cv2
-import random
 import numpy as np
 import pickle
 import constants
@@ -124,6 +122,20 @@ class Extractor:
                 image_name = "{:s}_inv.jpg".format(str(index))
                 image_path = os.path.join(category_dir, image_name)
                 cv2.imwrite(image_path, image_inv)
+
+    def create_random_images(self, category, count):
+        print('[INFO] creating random images in category {}'.format(category))
+
+        category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
+
+        for index in tqdm(range(count)):
+            if constants.USE_GRAYSCALE:
+                image_rand = np.random.randint(0, 255, size=(constants.IMG_SIZE, constants.IMG_SIZE), dtype=np.uint8)
+            else:
+                image_rand = np.random.randint(0, 255, size=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION), dtype=np.uint8)
+            image_name = "{:s}_rand.jpg".format(str(index))
+            image_path = os.path.join(category_dir, image_name)
+            cv2.imwrite(image_path, image_rand)
 
     def create_training_data(self):
         print('[INFO] creating training data')
