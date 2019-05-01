@@ -6,47 +6,42 @@ import constants
 class Isolator:
 
     def get_regions_of_interest(self, image):
-        regions_of_interest = [] # 0: roi, 1: type
+        # 0: roi, 1: type
+        regions_of_interest = []
 
-        cropped_images = self._crop(image)
+        cropped_images = self.__crop(image)
         for index, cropped in enumerate(cropped_images):
-            preprocessed_image = self._preprocess(cropped)
-            threshold_image = self._threshold(preprocessed_image)
-            contours = self._find_contours(threshold_image)
-            rois = self._crop_regions_of_interest(cropped, contours)
+            preprocessed_image = self.__preprocess(cropped)
+            threshold_image = self.__threshold(preprocessed_image)
+            contours = self.__find_contours(threshold_image)
+            rois = self.__crop_regions_of_interest(cropped, contours)
 
             for roi in rois:
-                roi_arr = []
-                roi_arr.append(roi)
-                roi_arr.append(index)
+                roi_arr = [roi, index]
                 regions_of_interest.append(roi_arr)
 
         return regions_of_interest
 
     def get_contours(self, image):
-        contours_signal_type = []  # 0: roi, 1: type
+        # 0: roi, 1: type
+        contours_signal_type = []
 
-        cropped_images = self._crop(image)
+        cropped_images = self.__crop(image)
         for index, cropped in enumerate(cropped_images):
-            preprocessed_image = self._preprocess(cropped)
-            threshold_image = self._threshold(preprocessed_image)
-            contours = self._find_contours(threshold_image)
+            preprocessed_image = self.__preprocess(cropped)
+            threshold_image = self.__threshold(preprocessed_image)
+            contours = self.__find_contours(threshold_image)
 
-            # TODO - refactor list!
             if len(contours) > 0:
-                contour_arr = []
-                contour_arr.append(contours)
-                contour_arr.append(cropped)
+                contour_arr = [contours, cropped]
                 contours_signal_type.append(contour_arr)
             else:
-                contour_arr = []
-                contour_arr.append(None)
-                contour_arr.append(cropped)
+                contour_arr = [None, cropped]
                 contours_signal_type.append(contour_arr)
 
         return contours_signal_type
 
-    def _crop(self, image):
+    def __crop(self, image):
         if constants.CAMERA_POSITION is 0:
             image_info = image[80:220, 0:340, :]
             image_stop = image[280:420, 0:340, :]
@@ -57,7 +52,7 @@ class Isolator:
 
         return [image_info, image_stop]
 
-    def _detect_edges(self, channel):
+    def __detect_edges(self, channel):
         sobel_x = cv2.Sobel(channel, cv2.CV_16S, 1, 0)
         sobel_y = cv2.Sobel(channel, cv2.CV_16S, 0, 1)
         sobel = np.hypot(sobel_x, sobel_y)
@@ -65,19 +60,19 @@ class Isolator:
 
         return sobel
 
-    def _preprocess(self, image):
+    def __preprocess(self, image):
         if constants.GRADIENT_FROM_RGB:
             # create gradient image from all 3 color channels
             # calculate gradient for channels and put it back together
             image = np.max(np.array(
-                [self._detect_edges(image[:, :, 0]),
-                 self._detect_edges(image[:, :, 1]),
-                 self._detect_edges(image[:, :, 2])]), axis=0)
+                [self.__detect_edges(image[:, :, 0]),
+                 self.__detect_edges(image[:, :, 1]),
+                 self.__detect_edges(image[:, :, 2])]), axis=0)
         else:
-            # create gradient image from grayscale image
+            # create gradient image from gray scale image
             # for better performance (only 1 channel)
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-            image = self._detect_edges(image)
+            image = self.__detect_edges(image)
         # calculate mean of the image
         mean = np.mean(image)
         # everything that is below the mean of the image will be set to black
@@ -87,12 +82,12 @@ class Isolator:
 
         return image
 
-    def _threshold(self, image):
+    def __threshold(self, image):
         image = cv2.inRange(image, 20, 200)
 
         return image
 
-    def _find_contours(self, image):
+    def __find_contours(self, image):
         image_height, image_width = image.shape
         contours, hierarchy = cv2.findContours(image, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
         contours_hierarchy = []
@@ -114,12 +109,12 @@ class Isolator:
 
                             if point_1_y > 0 and point_1_x > 0 and point_2_y < image_height and point_2_x < image_width:
                                 region_of_interest = image[point_1_y:point_2_y, point_1_x:point_2_x]
-                                if self._qualifies_as_number(region_of_interest):
+                                if self.__qualifies_as_number(region_of_interest):
                                     contours_hierarchy.append(cnt)
 
         return contours_hierarchy
 
-    def _qualifies_as_number(self, region_of_interest):
+    def __qualifies_as_number(self, region_of_interest):
         roi_h, roi_w = region_of_interest.shape
         anz_pixel = roi_h * roi_w
         anz_pixel_white = np.sum(region_of_interest == 255)
@@ -135,7 +130,7 @@ class Isolator:
 
         return qualifies_as_number
 
-    def _crop_regions_of_interest(self, image, contours):
+    def __crop_regions_of_interest(self, image, contours):
         regions_of_interest = []
         for contour in contours:
             x, y, w, h = cv2.boundingRect(contour)
@@ -150,15 +145,12 @@ class Isolator:
 
             if point_1_x < 0:
                 point_1_x = 0
-
             if point_1_y < 0:
                 point_1_y = 0
-
             if point_2_x < 0:
-                point_2_x
-
+                point_2_x = 0
             if point_2_y < 0:
-                point_2_y
+                point_2_y = 0
 
             region_of_interest = image[point_1_y:point_2_y, point_1_x:point_2_x]
             regions_of_interest.append(region_of_interest)

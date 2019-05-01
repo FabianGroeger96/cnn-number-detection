@@ -6,7 +6,7 @@ from tqdm import tqdm
 from utils.isolator.isolator import Isolator
 
 
-def classifyForSignal(image):
+def classify_for_signal(image):
     isolator = Isolator()
     contours = isolator.get_contours(image)
 
@@ -23,6 +23,7 @@ def classifyForSignal(image):
         contour_images.append(draw_image)
 
     return contour_images
+
 
 frames = []
 
@@ -48,7 +49,7 @@ os.makedirs(currentWorkingDir + "/continous/erun/original")
 os.makedirs(currentWorkingDir + "/continous/erun/contours")
 
 for i, frame in enumerate(tqdm(frames)):
-    result = classifyForSignal(frame)
+    result = classify_for_signal(frame)
     frameString = "/pic_{:08d}.jpg".format(i)
     cv2.imwrite((currentWorkingDir + "/continous/erun/original" + frameString), frame)
     for index, image in enumerate(result):

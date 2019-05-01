@@ -5,11 +5,11 @@ from trainer import Trainer
 def main():
     trainer = Trainer()
 
-    #trainer.create_model_deep()
+    #trainer.create_gnet_model_deep('with-random-images')
     #trainer.fit_model()
     #trainer.save_model()
 
-    trainer.create_model_light('with-random-images')
+    trainer.create_gnet_model_light('with-random-images')
     trainer.fit_model()
     trainer.save_model()
 

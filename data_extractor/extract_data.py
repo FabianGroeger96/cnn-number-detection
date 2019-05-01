@@ -1,4 +1,3 @@
-from time import sleep
 from data_extractor.extractor import Extractor
 
 

@@ -41,6 +41,7 @@ class Extractor:
 
         output_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR)
         print('[INFO] Output directory: ', output_dir)
+
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
@@ -75,6 +76,7 @@ class Extractor:
 
     def rename_images_in_categories(self):
         print('[INFO] renaming images in categories')
+
         for category in constants.CATEGORIES:
             category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
 
@@ -165,9 +167,9 @@ class Extractor:
 
         random.shuffle(self.training_data)
 
-        self._create_model()
+        self.__create_model()
 
-    def _create_model(self):
+    def __create_model(self):
         print('[INFO] creating data model')
 
         X = []
@@ -253,7 +255,7 @@ class Extractor:
 
     def augment_all_categories(self):
         print('[INFO] generating data')
-        # loop through all categories
+
         for category in constants.CATEGORIES:
             self.augment_category(category)
 

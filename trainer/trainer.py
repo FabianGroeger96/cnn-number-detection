@@ -39,12 +39,12 @@ class Trainer:
         self.trainY = self.lb.fit_transform(self.trainY)
         self.testY = self.lb.transform(self.testY)
 
-    def create_model_deep(self):
+    def create_gnet_model_deep(self, name_postfix):
         # give the model a name for tensorboard
-        NAME = 'CNN-number-detection-deepnet'
-        self.tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+        model_name = 'CNN-number-detection-deepnet-{}'.format(name_postfix)
+        self.tensorboard = TensorBoard(log_dir="logs/{}".format(model_name))
 
-        print('[INFO] creating model: ', NAME)
+        print('[INFO] creating model: ', model_name)
 
         # create model
         self.model = Sequential()
@@ -80,12 +80,12 @@ class Trainer:
         # display summary of the created model
         self.model.summary()
 
-    def create_model_light(self, name_postfix):
+    def create_gnet_model_light(self, name_postfix):
         # give the model a name for tensorboard
-        NAME = 'CNN-number-detection-lightnet-{}'.format(name_postfix)
-        self.tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+        model_name = 'CNN-number-detection-lightnet-{}'.format(name_postfix)
+        self.tensorboard = TensorBoard(log_dir="logs/{}".format(model_name))
 
-        print('[INFO] creating model: ', NAME)
+        print('[INFO] creating model: ', model_name)
 
         # create model
         self.model = Sequential()
@@ -112,12 +112,12 @@ class Trainer:
         # display summary of the created model
         self.model.summary()
 
-    def create_model_light_v2(self):
+    def create_gnet_model_light_v2(self):
         # give the model a name for tensorboard
-        NAME = 'CNN-number-detection-lightnet-v2'
-        self.tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+        model_name = 'CNN-number-detection-lightnet-v2'
+        self.tensorboard = TensorBoard(log_dir="logs/{}".format(model_name))
 
-        print('[INFO] creating model: ', NAME)
+        print('[INFO] creating model: ', model_name)
 
         # create model
         self.model = Sequential()
@@ -152,8 +152,8 @@ class Trainer:
         for dense_layer in dense_layers:
             for layer_size in layer_sizes:
                 for conv_layer in conv_layers:
-                    NAME = "{}-conv-{}-nodes-{}-dense-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
-                    print('[INFO] creating model: ', NAME)
+                    model_name = "{}-conv-{}-nodes-{}-dense-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
+                    print('[INFO] creating model: ', model_name)
 
                     # create model
                     model = Sequential()
@@ -179,7 +179,7 @@ class Trainer:
                     model.add(Dense(len(constants.CATEGORIES)))
                     model.add(Activation('softmax'))
 
-                    tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
+                    tensorboard = TensorBoard(log_dir="logs/{}".format(model_name))
 
                     model.compile(loss='categorical_crossentropy',
                                   optimizer=self.optimizer,
@@ -210,9 +210,6 @@ class Trainer:
         self.model.save(model_path)
         print('[INFO] successfully saved model to: ', model_path)
 
-    def convert_model_pytorch(self):
-        pass
-
     def convert_model_tensorflow(self):
         print('[INFO] saving model for tensorflow')
         model_output_path = '{}.pb'.format(constants.MODEL_DIR)
@@ -230,13 +227,13 @@ class Trainer:
         model_input_path = "{}.h5".format(constants.MODEL_DIR)
         model = keras.models.load_model(model_input_path)
 
-        frozen_graph = self._convert_keras_to_tensorflow(keras.backend.get_session(),
-                                      output_names=[out.op.name for out in model.outputs])
+        frozen_graph = self.__convert_keras_to_tensorflow(keras.backend.get_session(),
+                                                          output_names=[out.op.name for out in model.outputs])
         tf.train.write_graph(keras.backend.get_session().graph_def, output_path, "graph.pbtxt", as_text=True)
         tf.train.write_graph(frozen_graph, output_path, output_name, as_text=False)
         print('[INFO] successfully saved model to: ', model_output_path)
 
-    def _convert_keras_to_tensorflow(self, session, keep_var_names=None, output_names=None, clear_devices=True):
+    def __convert_keras_to_tensorflow(self, session, keep_var_names=None, output_names=None, clear_devices=True):
         graph = session.graph
         with graph.as_default():
             freeze_var_names = list(set(v.op.name for v in tf.global_variables()).difference(keep_var_names or []))
