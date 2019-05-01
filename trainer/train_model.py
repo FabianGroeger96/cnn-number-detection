@@ -9,7 +9,7 @@ def main():
     #trainer.fit_model()
     #trainer.save_model()
 
-    trainer.create_model_light()
+    trainer.create_model_light('with-random-images')
     trainer.fit_model()
     trainer.save_model()
 

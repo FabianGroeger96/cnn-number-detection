@@ -16,3 +16,8 @@ SIGNAL_TYPES = ["info", "stop"]
 BATCH_SIZE = 32
 EPOCHS = 10
 VALIDATION_SPLIT = 0.4
+
+# ISOLATOR
+# TODO - refactor, use enum
+# 0: Low, 1: High
+CAMERA_POSITION = 0

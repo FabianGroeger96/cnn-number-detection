@@ -80,9 +80,9 @@ class Trainer:
         # display summary of the created model
         self.model.summary()
 
-    def create_model_light(self):
+    def create_model_light(self, name_postfix):
         # give the model a name for tensorboard
-        NAME = 'CNN-number-detection-lightnet'
+        NAME = 'CNN-number-detection-lightnet-{}'.format(name_postfix)
         self.tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
 
         print('[INFO] creating model: ', NAME)

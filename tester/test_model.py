@@ -7,9 +7,11 @@ def main():
     # test the model with a given image
     tester.test_model_with_image("frame_number_4.jpg")
     # test the model with a random color array
-    tester.test_model_with_array(np.random.rand(28, 28, 3))
+    image_random_color = np.random.randint(0, 255, size=(28, 28, 3), dtype=np.uint8)
+    tester.test_model_with_array(image_random_color)
     # test the model with a random gray scale array
-    tester.test_model_with_array(np.random.rand(28, 28))
+    image_random_gray = np.random.randint(0, 255, size=(28, 28), dtype=np.uint8)
+    tester.test_model_with_array(image_random_gray)
 
 
 if __name__ == "__main__":
