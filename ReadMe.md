@@ -37,7 +37,7 @@ $ cd cnn-number-detection
 $ pip3 install -r requirements.txt
 ```
 
-## Usage (In progress)
+## Usage
 
 ### Extract data with DataExtractor
 
