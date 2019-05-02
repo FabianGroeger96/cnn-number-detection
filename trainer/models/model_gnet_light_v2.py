@@ -1,18 +1,18 @@
 import constants
-from trainer.model import Model
+from trainer.models.model import Model
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
-from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.python.keras.layers import Conv2D
 from tensorflow.python.keras.callbacks import TensorBoard
 
 
-class ModelGNetLight(Model):
+class ModelGNetLightV2(Model):
 
     def __init__(self, name_postfix='default', weights_path=None):
         super().__init__()
 
         # give the model a name for tensorboard
-        self.model_name = 'CNN-gnet-light-{}'.format(name_postfix)
+        self.model_name = 'CNN-gnet-light-v2-{}'.format(name_postfix)
         self.tensorboard = TensorBoard(log_dir="logs/{}".format(self.model_name))
 
         print('[INFO] creating model: ', self.model_name)
@@ -21,14 +21,13 @@ class ModelGNetLight(Model):
         self.model = Sequential()
 
         # add model layers
-        self.model.add(
-            Conv2D(16, kernel_size=3, input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
+        self.model.add(Conv2D(16, kernel_size=3,
+                              strides=(2, 2),
+                              input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
         self.model.add(Activation('relu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
-        self.model.add(Conv2D(32, kernel_size=3))
+        self.model.add(Conv2D(32, kernel_size=3, strides=(2, 2)))
         self.model.add(Activation('relu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
         self.model.add(Dropout(rate=0.5))
         self.model.add(Flatten())

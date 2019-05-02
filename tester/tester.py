@@ -1,7 +1,7 @@
 import cv2
 import constants
 from utils.isolator.isolator import Isolator
-from trainer.model_gnet_light import ModelGNetLight
+from trainer.models.model_gnet_light import ModelGNetLight
 
 
 class Tester:

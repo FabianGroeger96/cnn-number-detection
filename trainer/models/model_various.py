@@ -1,6 +1,6 @@
 import time
 import constants
-from trainer.model import Model
+from trainer.models.model import Model
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
