@@ -23,7 +23,7 @@ and a category for 'not numbers'.
 You need to have the following packages installed:
 
 - Python 3.6
-- Tensorflow 1.1.2
+- Tensorflow 1.4.1+
 - OpenCV 4.0
 - Etc.
 
