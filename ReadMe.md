@@ -64,3 +64,14 @@ in each category
 4. Run the `extract_data.py` file and call the method `create_training_data()`, 
 this will create your pickle files (`X.pickle` and `y.pickle`) which contain 
 the data and the labels of your data
+
+### Label the Data (with existing Model)
+
+1. First of all you will have to extract the regions of interest with the DataExtractor 
+(follow the step *Extract data with DataExtractor*)
+2. Specify in the `constants.py` file where your model will be located, by modifying the
+`MODEL_DIR` constant
+3. Place your existing model in the directory that you specified before
+4. Run the `extract_data.py` file and call the method `categorize_with_trained_model()`, 
+this will categorize your regions of interest
+5. Verify that the data was labeled correctly, by checking the `data_extracted` folder
