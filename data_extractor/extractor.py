@@ -9,7 +9,7 @@ import random
 from natsort import natsorted
 from tqdm import tqdm
 from utils.isolator.isolator import Isolator
-from tester.g_net import load_model
+from trainer.model_gnet_light import ModelGNetLight
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.preprocessing.image import array_to_img, img_to_array, load_img
 
@@ -195,7 +195,8 @@ class Extractor:
         print('[INFO] categorizing images')
 
         model_path = "{}.h5".format(constants.MODEL_DIR)
-        model = load_model(model_path)
+        model_obj = ModelGNetLight(weights_path=model_path)
+        model = model_obj.get_model()
 
         extracted_data_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR)
 

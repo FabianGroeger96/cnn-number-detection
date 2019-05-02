@@ -1,6 +1,5 @@
 import os
 import pickle
-import time
 
 import constants
 import tensorflow as tf
@@ -10,13 +9,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
-from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
-from tensorflow.python.keras.callbacks import TensorBoard
 
-# disable tensorflow debugging (INFO, WARNING)
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+# only show tensorflow errors
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 
 class Model:
@@ -45,13 +41,16 @@ class Model:
         self.trainY = self.lb.fit_transform(self.trainY)
         self.testY = self.lb.transform(self.testY)
 
+    def get_model(self):
+        return self.model
+
     def save_model(self):
         print('[INFO] saving model')
         model_path = "{}.h5".format(constants.MODEL_DIR)
         self.model.save(model_path)
         print('[INFO] successfully saved model to: ', model_path)
 
-    def fit_model(self):
+    def train_model(self):
         print('[INFO] training model')
         self.model.fit(self.trainX, self.trainY,
                        validation_data=(self.testX, self.testY),
@@ -99,6 +98,3 @@ class Model:
                     node.device = ""
             frozen_graph = convert_variables_to_constants(session, input_graph_def, output_names, freeze_var_names)
             return frozen_graph
-
-    def create_model(self, name_postfix):
-        raise NotImplementedError

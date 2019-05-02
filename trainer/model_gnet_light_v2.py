@@ -1,19 +1,21 @@
 import constants
-from model import Model
+from trainer.model import Model
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
-from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.python.keras.layers import Conv2D
 from tensorflow.python.keras.callbacks import TensorBoard
 
 
 class ModelGNetLightV2(Model):
 
-    def create_model(self, name_postfix):
-        # give the model a name for tensorboard
-        model_name = 'CNN-gnet-light-v2-{}'.format(name_postfix)
-        self.tensorboard = TensorBoard(log_dir="logs/{}".format(model_name))
+    def __init__(self, name_postfix='default', weights_path=None):
+        super().__init__()
 
-        print('[INFO] creating model: ', model_name)
+        # give the model a name for tensorboard
+        self.model_name = 'CNN-gnet-light-v2-{}'.format(name_postfix)
+        self.tensorboard = TensorBoard(log_dir="logs/{}".format(self.model_name))
+
+        print('[INFO] creating model: ', self.model_name)
 
         # create model
         self.model = Sequential()
@@ -33,12 +35,13 @@ class ModelGNetLightV2(Model):
         self.model.add(Dense(len(constants.CATEGORIES)))
         self.model.add(Activation('softmax'))
 
+        # load weights if path is given
+        if weights_path:
+            self.model.load_weights(weights_path)
+
         self.model.compile(loss='categorical_crossentropy',
                            optimizer=self.optimizer,
                            metrics=['accuracy'])
 
         # display summary of the created model
         self.model.summary()
-
-        # fit (train) the model
-        Model.fit_model(self)

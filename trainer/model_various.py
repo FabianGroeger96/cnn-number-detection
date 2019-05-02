@@ -1,24 +1,29 @@
 import time
 import constants
-from model import Model
+from trainer.model import Model
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
+from tensorflow.python.keras.layers import Dense, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras.callbacks import TensorBoard
 
 
 class ModelVarious(Model):
 
-    def create_model(self, name_postfix):
-        dense_layers = [0, 1, 2]
-        layer_sizes = [16, 32, 64]
-        conv_layers = [1, 2, 3]
+    def __init__(self, name_postfix='default'):
+        super().__init__()
 
-        for dense_layer in dense_layers:
-            for layer_size in layer_sizes:
-                for conv_layer in conv_layers:
+        self.name_postfix = name_postfix
+
+        self.dense_layers = [0, 1, 2]
+        self.layer_sizes = [16, 32, 64]
+        self.conv_layers = [1, 2, 3]
+
+    def train_model(self):
+        for dense_layer in self.dense_layers:
+            for layer_size in self.layer_sizes:
+                for conv_layer in self.conv_layers:
                     model_name = "{}-conv-{}-nodes-{}-dense-{}-{}".format(conv_layer, layer_size, dense_layer,
-                                                                       int(time.time()), name_postfix)
+                                                                       int(time.time()), self.name_postfix)
                     self.tensorboard = TensorBoard(log_dir="logs/{}".format(model_name))
 
                     print('[INFO] creating model: ', model_name)
@@ -51,5 +56,4 @@ class ModelVarious(Model):
                                   optimizer=self.optimizer,
                                   metrics=['accuracy'], )
 
-                    # fit (train) the model
-                    Model.fit_model(self)
+                    super().train_model()

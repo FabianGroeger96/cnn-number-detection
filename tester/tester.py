@@ -1,14 +1,15 @@
 import cv2
 import constants
 from utils.isolator.isolator import Isolator
-from g_net import load_model
+from trainer.model_gnet_light import ModelGNetLight
 
 
 class Tester:
 
     def __init__(self):
         model_path = "{}.h5".format(constants.MODEL_DIR)
-        self.model = load_model(model_path)
+        model_obj = ModelGNetLight(weights_path=model_path)
+        self.model = model_obj.get_model()
         self.model.summary()
 
         self.isolator = Isolator()
