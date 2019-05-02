@@ -58,12 +58,6 @@ These folders are used to label the regions of interest for then training your C
 1. First of all you will have to extract the regions of interest with the DataExtractor 
 (follow the step *Extract data with DataExtractor*)
 2. Classify the images, by dragging them in the corresponding category folder
-3. If you are finished, run the `extract_data.py` file and call the method 
-`rename_images_in_categories()` from the `Extractor`, this will rename the images 
-in each category
-4. Run the `extract_data.py` file and call the method `create_training_data()`, 
-this will create your pickle files (`X.pickle` and `y.pickle`) which contain 
-the data and the labels of your data
 
 ### Label the Data (with existing Model)
 
@@ -75,3 +69,26 @@ the data and the labels of your data
 4. Run the `extract_data.py` file and call the method `categorize_with_trained_model()`, 
 this will categorize your regions of interest
 5. Verify that the data was labeled correctly, by checking the `data_extracted` folder
+
+### Create dataset pickle files
+
+1. If you are finished labeling the images, run the `extract_data.py` file and call the method 
+`rename_images_in_categories()` from the `Extractor`, this will rename the images 
+in each category
+2. Run the `extract_data.py` file and call the method `create_training_data()`, 
+this will create your pickle files (`X.pickle` and `y.pickle`) which contain 
+the data and the labels of your data
+
+### Train the CNN
+
+1. Check if the pickle files (`X.pickle` and `y.pickle`) were created in the root directory
+of the project
+2. Run the `train_model.py` file within the trainer, this will train your model and save it 
+to the directory specified in the `constants.py` (`MODEL_DIR`)
+
+### Test the CNN
+
+1. Check if the model was created in the directory specified in `constants.py` (`MODEL_DIR`)
+2. Upload a testing image to the `tester` directory
+2. Run the `test_model.py` file within the tester and give the `test_model_with_image(image_name)` 
+function the name of the image
