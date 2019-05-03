@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
+from tensorflow.python.keras.callbacks import TensorBoard
 
 
 # only show tensorflow errors
@@ -17,21 +18,22 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 
 class Model:
 
-    def __init__(self):
+    def __init__(self, model_name='model-default'):
+        print('[INFO] creating model: ', self.model_name)
+
         # specify the model
         self.model = None
         # specify learning rate for optimizer
         self.optimizer = Adam(lr=1e-3)
         # to start tensorboard run: tensorboard --logdir=logs/, in working directory
-        self.tensorboard = None
+        self.tensorboard = TensorBoard(log_dir="logs/{}".format(model_name))
 
-        pickle_in = open("../X.pickle", "rb")
-        X = pickle.load(pickle_in)
-        # scale the raw pixel intensities to the range [0, 1]
+        # load the image data and scale the pixels intensities to range [0, 1]
+        X = pickle.load(open("../X.pickle", "rb"))
         X = X / 255
 
-        pickle_in = open("../y.pickle", "rb")
-        y = pickle.load(pickle_in)
+        # load the image data labels
+        y = pickle.load(open("../y.pickle", "rb"))
 
         # train test split
         (self.trainX, self.testX, self.trainY, self.testY) = train_test_split(X, y,
@@ -43,6 +45,9 @@ class Model:
 
     def get_model(self):
         return self.model
+
+    def set_model(self, model):
+        self.model = model
 
     def save_model(self):
         print('[INFO] saving model')

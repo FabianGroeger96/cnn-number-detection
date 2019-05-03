@@ -28,6 +28,8 @@ class ModelVarious(Model):
 
                     print('[INFO] creating model: ', model_name)
 
+                    model_obj = Model(model_name)
+
                     # create model
                     self.model = Sequential()
 

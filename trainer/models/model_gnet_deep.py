@@ -3,19 +3,14 @@ from trainer.models.model import Model
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
-from tensorflow.python.keras.callbacks import TensorBoard
 
 
 class ModelGNetDeep(Model):
 
     def __init__(self, name_postfix='default', weights_path=None):
-        super().__init__()
-
-        # give the model a name for tensorboard
-        self.model_name = 'CNN-gnet-deep-{}'.format(name_postfix)
-        self.tensorboard = TensorBoard(log_dir="logs/{}".format(self.model_name))
-
-        print('[INFO] creating model: ', self.model_name)
+        # call the init method from superclass
+        model_name = 'CNN-gnet-deep-{}'.format(name_postfix)
+        super().__init__(model_name)
 
         # create model
         self.model = Sequential()
