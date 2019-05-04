@@ -9,7 +9,7 @@ class Tester:
     def __init__(self):
         model_path = "{}.h5".format(constants.MODEL_DIR)
         model_obj = ModelGNetLight(weights_path=model_path)
-        self.model = model_obj.get_model()
+        self.model = model_obj.model
         self.model.summary()
 
         self.isolator = Isolator()

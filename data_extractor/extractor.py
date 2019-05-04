@@ -196,7 +196,7 @@ class Extractor:
 
         model_path = "{}.h5".format(constants.MODEL_DIR)
         model_obj = ModelGNetLight(weights_path=model_path)
-        model = model_obj.get_model()
+        model = model_obj.model
 
         extracted_data_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR)
 

@@ -1,6 +1,4 @@
-import os
 import pickle
-
 import constants
 import tensorflow as tf
 from tensorflow import keras
@@ -19,12 +17,14 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 class Model:
 
     def __init__(self, model_name='model-default'):
-        print('[INFO] creating model: ', self.model_name)
+        print('[INFO] creating model: ', model_name)
 
         # specify the model
         self.model = None
+
         # specify learning rate for optimizer
         self.optimizer = Adam(lr=1e-3)
+
         # to start tensorboard run: tensorboard --logdir=logs/, in working directory
         self.tensorboard = TensorBoard(log_dir="logs/{}".format(model_name))
 
@@ -42,12 +42,6 @@ class Model:
         self.lb = LabelBinarizer()
         self.trainY = self.lb.fit_transform(self.trainY)
         self.testY = self.lb.transform(self.testY)
-
-    def get_model(self):
-        return self.model
-
-    def set_model(self, model):
-        self.model = model
 
     def save_model(self):
         print('[INFO] saving model')
