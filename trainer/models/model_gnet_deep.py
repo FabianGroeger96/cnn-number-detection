@@ -7,11 +7,12 @@ from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 
 class ModelGNetDeep(Model):
 
-    def __init__(self, name_postfix='default', weights_path=None):
+    def __init__(self, name_postfix):
         # call the init method from superclass
         model_name = 'CNN-gnet-deep-{}'.format(name_postfix)
         super().__init__(model_name)
 
+    def create_model(self, weights_path=None):
         # create model
         self.model = Sequential()
 

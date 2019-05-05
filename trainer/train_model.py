@@ -8,8 +8,8 @@ from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 
 
 def main():
-
     model = ModelGNetLight('full-dataset-aug-rand-batch-16-epoch-10')
+    model.create_model()
     model.train_model()
     model.save_model()
 

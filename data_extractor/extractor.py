@@ -134,7 +134,9 @@ class Extractor:
             if constants.USE_GRAYSCALE:
                 image_rand = np.random.randint(0, 255, size=(constants.IMG_SIZE, constants.IMG_SIZE), dtype=np.uint8)
             else:
-                image_rand = np.random.randint(0, 255, size=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION), dtype=np.uint8)
+                image_rand = np.random.randint(0, 255,
+                                               size=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION),
+                                               dtype=np.uint8)
             image_name = "{:s}_rand.jpg".format(str(index))
             image_path = os.path.join(category_dir, image_name)
             cv2.imwrite(image_path, image_rand)

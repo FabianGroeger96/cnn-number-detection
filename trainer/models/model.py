@@ -9,14 +9,13 @@ from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
 from tensorflow.python.keras.callbacks import TensorBoard
 
-
 # only show tensorflow errors
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
 class Model:
 
-    def __init__(self, model_name='model-default'):
+    def __init__(self, model_name):
         print('[INFO] creating model: ', model_name)
 
         # specify the model
@@ -37,11 +36,14 @@ class Model:
 
         # train test split
         (self.trainX, self.testX, self.trainY, self.testY) = train_test_split(X, y,
-                                                          test_size=constants.VALIDATION_SPLIT,
-                                                          random_state=42)
+                                                                              test_size=constants.VALIDATION_SPLIT,
+                                                                              random_state=42)
         self.lb = LabelBinarizer()
         self.trainY = self.lb.fit_transform(self.trainY)
         self.testY = self.lb.transform(self.testY)
+
+    def create_model(self, weights_path=None):
+        raise NotImplementedError
 
     def save_model(self):
         print('[INFO] saving model')
@@ -79,13 +81,13 @@ class Model:
         model_input_path = "{}.h5".format(constants.MODEL_DIR)
         model = keras.models.load_model(model_input_path)
 
-        frozen_graph = self.__convert_keras_to_tensorflow(keras.backend.get_session(),
-                                                          output_names=[out.op.name for out in model.outputs])
+        frozen_graph = self.__freeze_session(keras.backend.get_session(),
+                                             output_names=[out.op.name for out in model.outputs])
         tf.train.write_graph(keras.backend.get_session().graph_def, output_path, "graph.pbtxt", as_text=True)
         tf.train.write_graph(frozen_graph, output_path, output_name, as_text=False)
         print('[INFO] successfully saved model to: ', model_output_path)
 
-    def __convert_keras_to_tensorflow(self, session, keep_var_names=None, output_names=None, clear_devices=True):
+    def __freeze_session(self, session, keep_var_names=None, output_names=None, clear_devices=True):
         graph = session.graph
         with graph.as_default():
             freeze_var_names = list(set(v.op.name for v in tf.global_variables()).difference(keep_var_names or []))

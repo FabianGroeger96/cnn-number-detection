@@ -156,4 +156,3 @@ class Isolator:
             regions_of_interest.append(region_of_interest)
 
         return regions_of_interest
-
