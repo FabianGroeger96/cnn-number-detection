@@ -3,7 +3,7 @@ import cv2
 import shutil
 import numpy as np
 from tqdm import tqdm
-from utils.isolator.isolator import Isolator
+from isolator.isolator import Isolator
 
 
 def classify_for_signal(image):

@@ -1,4 +1,5 @@
 import pickle
+import numpy as np
 import constants
 import tensorflow as tf
 from tensorflow import keras
@@ -8,9 +9,12 @@ from sklearn.metrics import classification_report
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
 from tensorflow.python.keras.callbacks import TensorBoard
+from trainer.utils.tensorboard_filter_visualisation_callback import TensorBoardFilterVisualisationCallback
 
 # only show tensorflow errors
 tf.logging.set_verbosity(tf.logging.ERROR)
+# same for numpy
+np.seterr(divide='ignore', invalid='ignore')
 
 
 class Model:
@@ -20,6 +24,7 @@ class Model:
 
         # specify the model
         self.model = None
+        self.model_name = model_name
 
         # specify learning rate for optimizer
         self.optimizer = Adam(lr=1e-3)
@@ -57,7 +62,8 @@ class Model:
                        validation_data=(self.testX, self.testY),
                        batch_size=constants.BATCH_SIZE,
                        epochs=constants.EPOCHS,
-                       callbacks=[self.tensorboard])
+                       callbacks=[self.tensorboard,
+                                  TensorBoardFilterVisualisationCallback(self.model, self.model_name)])
 
         print("[INFO] evaluating network")
         predictions = self.model.predict(self.testX, batch_size=32)

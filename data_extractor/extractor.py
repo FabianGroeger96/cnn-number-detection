@@ -8,7 +8,7 @@ import random
 
 from natsort import natsorted
 from tqdm import tqdm
-from utils.isolator.isolator import Isolator
+from isolator.isolator import Isolator
 from trainer.models.model_gnet_light import ModelGNetLight
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.preprocessing.image import array_to_img, img_to_array, load_img

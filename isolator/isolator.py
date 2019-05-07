@@ -156,3 +156,17 @@ class Isolator:
             regions_of_interest.append(region_of_interest)
 
         return regions_of_interest
+
+    def reshape_image_for_input(self, image_array):
+        resized_image_array = cv2.resize(image_array, (constants.IMG_SIZE, constants.IMG_SIZE))
+        reshaped_image = resized_image_array.reshape(-1, constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)
+
+        return reshaped_image
+
+    def preprocess_image_for_input(self, image_array):
+        if constants.USE_GRAYSCALE:
+            image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)
+
+        reshaped_image = self.reshape_image_for_input(image_array)
+
+        return reshaped_image
