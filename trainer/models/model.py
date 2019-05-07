@@ -9,7 +9,7 @@ from sklearn.metrics import classification_report
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
 from tensorflow.python.keras.callbacks import TensorBoard
-from trainer.utils.tensorboard_filter_visualisation_callback import TensorBoardFilterVisualisationCallback
+from trainer.utils.tensorboard_filter_visualisation import TensorBoardFilterVisualisation
 
 # only show tensorflow errors
 tf.logging.set_verbosity(tf.logging.ERROR)
@@ -58,12 +58,14 @@ class Model:
 
     def train_model(self):
         print('[INFO] training model')
+        tensorboard_visualisation = TensorBoardFilterVisualisation(self.model, self.model_name)
         self.model.fit(self.trainX, self.trainY,
                        validation_data=(self.testX, self.testY),
                        batch_size=constants.BATCH_SIZE,
                        epochs=constants.EPOCHS,
-                       callbacks=[self.tensorboard,
-                                  TensorBoardFilterVisualisationCallback(self.model, self.model_name)])
+                       callbacks=[self.tensorboard])
+
+        tensorboard_visualisation.save_images()
 
         print("[INFO] evaluating network")
         predictions = self.model.predict(self.testX, batch_size=32)

@@ -3,12 +3,11 @@ import tensorflow as tf
 import cv2
 import io
 from PIL import Image
-from tensorflow import keras
 from tensorflow.python.keras import models
 from isolator.isolator import Isolator
 
 
-class TensorBoardFilterVisualisationCallback(keras.callbacks.Callback):
+class TensorBoardFilterVisualisation:
     def __init__(self, model, name):
         super().__init__()
         self.model = model
@@ -19,7 +18,7 @@ class TensorBoardFilterVisualisationCallback(keras.callbacks.Callback):
         self.activation_model = models.Model(inputs=self.model.input,
                                              outputs=self.layer_outputs)
 
-    def on_epoch_end(self, epoch, logs={}):
+    def save_images(self):
         images_filters, layer_names = self.__visualize_filters()
 
         writer = tf.summary.FileWriter('logs/{}'.format(self.name))
@@ -27,7 +26,7 @@ class TensorBoardFilterVisualisationCallback(keras.callbacks.Callback):
             layer_name = 'layer_{}_{}'.format(index, layer_names[index])
             image = self.__make_image(image.astype('uint8'))
             summary = tf.Summary(value=[tf.Summary.Value(tag=layer_name, image=image)])
-            writer.add_summary(summary, epoch)
+            writer.add_summary(summary)
         writer.close()
 
         return
