@@ -4,15 +4,13 @@ import os
 import shutil
 import numpy as np
 from tqdm import tqdm
-from isolator.isolator import Isolator
-from trainer.models.model_gnet_light import ModelGNetLight
+from Isolator.isolator import Isolator
 
 
 class Tester:
 
-    def __init__(self):
+    def __init__(self, model_obj):
         model_path = "{}.h5".format(constants.MODEL_DIR)
-        model_obj = ModelGNetLight('GNet')
         model_obj.create_model(weights_path=model_path)
         self.model = model_obj.model
         self.model.summary()

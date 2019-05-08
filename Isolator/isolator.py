@@ -1,9 +1,9 @@
 import cv2
 import constants
 import numpy as np
-from isolator.isolator_constants import IsolatorConstants
-from isolator.isolator_constants_320_240 import IsolatorConstants320240
-from isolator.isolator_constants_640_480 import IsolatorConstants640480
+from Isolator.isolator_constants import IsolatorConstants
+from Isolator.isolator_constants_320_240 import IsolatorConstants320240
+from Isolator.isolator_constants_640_480 import IsolatorConstants640480
 
 
 class Isolator:
@@ -16,7 +16,7 @@ class Isolator:
         # 0: roi, 1: type
         regions_of_interest = []
 
-        if constants.USE_GRAYSCALE:
+        if constants.USE_GRAY_SCALE:
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
         if self.CONSTANTS is None:
@@ -40,7 +40,7 @@ class Isolator:
         # 0: roi, 1: type
         contours_signal_type = []
 
-        if constants.USE_GRAYSCALE:
+        if constants.USE_GRAY_SCALE:
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
         if self.CLASS_CONSTANTS is not None:
@@ -64,7 +64,7 @@ class Isolator:
         return contours_signal_type
 
     def __set_constants(self, image):
-        if constants.USE_GRAYSCALE:
+        if constants.USE_GRAY_SCALE:
             image_height, image_width = image.shape
         else:
             image_height, image_width, _ = image.shape
@@ -84,7 +84,7 @@ class Isolator:
         width_start = self.CONSTANTS.CROP_WIDTH_START
         width_end = self.CONSTANTS.CROP_WIDTH_END
 
-        if constants.USE_GRAYSCALE:
+        if constants.USE_GRAY_SCALE:
             image_info = image[info_start:info_end, width_start:width_end]
             image_stop = image[stop_start:stop_end, width_start:width_end]
         else:
@@ -102,7 +102,7 @@ class Isolator:
         return sobel
 
     def __preprocess(self, image):
-        if constants.USE_GRAYSCALE:
+        if constants.USE_GRAY_SCALE:
             # create gradient image from gray scale image
             # for better performance (only 1 channel)
             image = self.__detect_edges(image)

@@ -1,4 +1,4 @@
-from isolator.isolator_constants import IsolatorConstants
+from Isolator.isolator_constants import IsolatorConstants
 
 
 class IsolatorConstants640480(IsolatorConstants):

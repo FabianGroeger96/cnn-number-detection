@@ -1,14 +1,15 @@
 import time
 import constants
-from trainer.models.model_gnet_light import ModelGNetLight
-from trainer.models.model import Model
+from Trainer.Models.model_gnet_light import ModelGNetLight
+from Trainer.Models.model_gnet_deep import ModelGNetDeep
+from Trainer.Models.model import Model
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 
 
 def main():
-    model = ModelGNetLight('new-without-duplicates-aug-batch-16-epoch-10-test')
+    model = ModelGNetDeep('new-without-duplicates-aug-batch-16-epoch-10-test')
     model.create_model()
     model.train_model()
     model.save_model()

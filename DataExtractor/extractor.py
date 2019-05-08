@@ -8,8 +8,8 @@ import random
 
 from natsort import natsorted
 from tqdm import tqdm
-from isolator.isolator import Isolator
-from trainer.models.model_gnet_light import ModelGNetLight
+from Isolator.isolator import Isolator
+from Trainer.Models.model_gnet_light import ModelGNetLight
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.preprocessing.image import array_to_img, img_to_array, load_img
 
@@ -131,7 +131,7 @@ class Extractor:
         category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
 
         for index in tqdm(range(count)):
-            if constants.USE_GRAYSCALE:
+            if constants.USE_GRAY_SCALE:
                 image_rand = np.random.randint(0, 255, size=(constants.IMG_SIZE, constants.IMG_SIZE), dtype=np.uint8)
             else:
                 image_rand = np.random.randint(0, 255,
@@ -157,7 +157,7 @@ class Extractor:
                     img_array = cv2.imread(os.path.join(category_dir, img))
                     if img_array is not None:
                         # convert image to grayscale if parameter is set in constants file
-                        if constants.USE_GRAYSCALE:
+                        if constants.USE_GRAY_SCALE:
                             img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
                         # resize to normalize data size
                         new_array = cv2.resize(img_array, (constants.IMG_SIZE, constants.IMG_SIZE))
@@ -210,7 +210,7 @@ class Extractor:
                 image_path = os.path.join(extracted_data_dir, img)
                 img_array = cv2.imread(image_path)
                 if img_array is not None:
-                    if constants.USE_GRAYSCALE:
+                    if constants.USE_GRAY_SCALE:
                         image_array = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
                     resized_image_array = cv2.resize(image_array, (constants.IMG_SIZE, constants.IMG_SIZE))
                     reshaped_image = resized_image_array.reshape(-1, constants.IMG_SIZE, constants.IMG_SIZE,

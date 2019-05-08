@@ -1,4 +1,4 @@
-from data_extractor.extractor import Extractor
+from DataExtractor.extractor import Extractor
 
 
 def main():

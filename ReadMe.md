@@ -12,9 +12,9 @@ and a category for 'not numbers'.
 ### Includes
 
 - DataExtractor (to extract data for the dataset)
+- Isolator (to find the numbers inside an image)
 - Trainer (to train the model)
 - Tester (to test the model on custom images)
-- Utils (test, simulate the isolator on images)
 
 ## Install
 

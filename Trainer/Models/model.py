@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
 from tensorflow.python.keras.callbacks import TensorBoard
-from trainer.utils.tensorboard_filter_visualisation import TensorBoardFilterVisualisation
+from Trainer.Utils.tensorboard_filter_visualisation import TensorBoardFilterVisualisation
 
 # only show tensorflow errors
 tf.logging.set_verbosity(tf.logging.ERROR)

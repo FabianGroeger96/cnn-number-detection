@@ -1,5 +1,5 @@
 import constants
-from trainer.models.model import Model
+from Trainer.Models.model import Model
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D

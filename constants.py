@@ -5,7 +5,7 @@ CATEGORIES = ["-1", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 MODEL_DIR = "../number_detection_model"
 
 IMG_SIZE = 28
-USE_GRAYSCALE = True
+USE_GRAY_SCALE = True
 DIMENSION = 1
 
 SIGNAL_TYPES = ["info", "stop"]
