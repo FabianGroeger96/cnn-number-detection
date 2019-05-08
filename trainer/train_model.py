@@ -8,10 +8,10 @@ from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 
 
 def main():
-    model = ModelGNetLight('full-dataset-aug-rand-batch-16-epoch-10-test')
+    model = ModelGNetLight('new-without-duplicates-aug-batch-16-epoch-10-test')
     model.create_model()
     model.train_model()
-    #model.save_model()
+    model.save_model()
 
     # train_multiple_models('full-dataset-aug-rand',
     #                       dense_layers=[0, 1, 2],
