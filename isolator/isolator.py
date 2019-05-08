@@ -1,13 +1,12 @@
-import numpy as np
 import cv2
 import constants
+import numpy as np
 from isolator.isolator_constants import IsolatorConstants
 from isolator.isolator_constants_320_240 import IsolatorConstants320240
 from isolator.isolator_constants_640_480 import IsolatorConstants640480
 
 
 class Isolator:
-
     CLASS_CONSTANTS = IsolatorConstants
 
     def __init__(self):
@@ -28,6 +27,7 @@ class Isolator:
             preprocessed_image = self.__preprocess(cropped)
             threshold_image = self.__threshold(preprocessed_image)
             contours = self.__find_contours(threshold_image)
+            contours = self.__check_countours(contours)
             rois = self.__crop_regions_of_interest(cropped, contours)
 
             for roi in rois:
@@ -36,7 +36,7 @@ class Isolator:
 
         return regions_of_interest
 
-    def get_contours(self, image):
+    def get_contours_and_rois(self, image):
         # 0: roi, 1: type
         contours_signal_type = []
 
@@ -51,12 +51,14 @@ class Isolator:
             preprocessed_image = self.__preprocess(cropped)
             threshold_image = self.__threshold(preprocessed_image)
             contours = self.__find_contours(threshold_image)
+            contours = self.__check_countours(contours)
+            rois = self.__crop_regions_of_interest(cropped, contours)
 
             if len(contours) > 0:
-                contour_arr = [contours, cropped]
+                contour_arr = [contours, rois, cropped]
                 contours_signal_type.append(contour_arr)
             else:
-                contour_arr = [None, cropped]
+                contour_arr = [None, None, cropped]
                 contours_signal_type.append(contour_arr)
 
         return contours_signal_type
@@ -167,6 +169,29 @@ class Isolator:
             qualifies_as_number = True
 
         return qualifies_as_number
+
+    def __check_countours(self, contours):
+        contours_removed = []
+        for cnt in contours:
+            for cnt2 in contours:
+                if cnt is not cnt2 and cnt not in contours_removed and cnt2 not in contours_removed:
+                    x, y, w, h = cv2.boundingRect(cnt2)
+                    length = int(w)
+                    height = int(h)
+
+                    point_1_x = int(x + w // 2 - length // 2)
+                    point_1_y = int(y + h // 2 - height // 2)
+
+                    center_x = point_1_x + int(length / 2)
+                    center_y = point_1_y + int(height / 2)
+
+                    dist_center = cv2.pointPolygonTest(cnt, (center_x, center_y), False)
+
+                    if dist_center > -1:
+                        contours.remove(cnt2)
+                        contours_removed.append(cnt2)
+
+        return contours
 
     def __crop_regions_of_interest(self, image, contours):
         regions_of_interest = []
