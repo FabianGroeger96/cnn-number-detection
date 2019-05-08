@@ -2,16 +2,17 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import io
+import constants
 from PIL import Image
 from tensorflow.python.keras import models
-from isolator.isolator import Isolator
 
 
 class TensorBoardFilterVisualisation:
-    def __init__(self, model, name):
+    def __init__(self, model, name, prediction_image):
         super().__init__()
         self.model = model
         self.name = name
+        self.prediction_image = prediction_image
         # Extracts the outputs of the top 7 layers
         self.layer_outputs = [layer.output for layer in self.model.layers[:7]]
         # Creates a model that will return these outputs, given the model input
@@ -22,8 +23,9 @@ class TensorBoardFilterVisualisation:
         images_filters, layer_names = self.__visualize_filters()
 
         writer = tf.summary.FileWriter('logs/{}'.format(self.name))
+        # display filters of all layers
         for index, image in enumerate(images_filters):
-            layer_name = 'layer_{}_{}'.format(index, layer_names[index])
+            layer_name = 'layer_{}_{}'.format(index + 1, layer_names[index])
             image = self.__make_image(image.astype('uint8'))
             summary = tf.Summary(value=[tf.Summary.Value(tag=layer_name, image=image)])
             writer.add_summary(summary)
@@ -32,12 +34,8 @@ class TensorBoardFilterVisualisation:
         return
 
     def __visualize_filters(self):
-        isolator = Isolator()
-        image_array = cv2.imread('prediction_image.jpg')
-        image_array = cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB)
-        image_processed = isolator.preprocess_image_for_input(image_array)
-
-        activations = self.activation_model.predict([image_processed])
+        activations = self.activation_model.predict(
+            [self.prediction_image.reshape(1, constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)])
 
         layer_names = []
         for layer in self.model.layers[:7]:

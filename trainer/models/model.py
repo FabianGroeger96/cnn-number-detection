@@ -1,6 +1,7 @@
 import pickle
 import numpy as np
 import constants
+import random
 import tensorflow as tf
 from tensorflow import keras
 from sklearn.preprocessing import LabelBinarizer
@@ -58,7 +59,8 @@ class Model:
 
     def train_model(self):
         print('[INFO] training model')
-        tensorboard_visualisation = TensorBoardFilterVisualisation(self.model, self.model_name)
+        tensorboard_visualisation = TensorBoardFilterVisualisation(self.model, self.model_name,
+                                                                   self.trainX[random.randint(0, len(self.trainX))])
         self.model.fit(self.trainX, self.trainY,
                        validation_data=(self.testX, self.testY),
                        batch_size=constants.BATCH_SIZE,
