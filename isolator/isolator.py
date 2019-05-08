@@ -1,13 +1,21 @@
 import numpy as np
 import cv2
 import constants
+from isolator.isolator_constants import IsolatorConstants
+from isolator.isolator_constants_320_240 import IsolatorConstants320240
+from isolator.isolator_constants_640_480 import IsolatorConstants640480
 
 
 class Isolator:
 
+    CLASS_CONSTANTS = IsolatorConstants
+
     def get_regions_of_interest(self, image):
         # 0: roi, 1: type
         regions_of_interest = []
+
+        if self.CLASS_CONSTANTS is not None:
+            self.__set_constants(image)
 
         cropped_images = self.__crop(image)
         for index, cropped in enumerate(cropped_images):
@@ -26,6 +34,9 @@ class Isolator:
         # 0: roi, 1: type
         contours_signal_type = []
 
+        if self.CLASS_CONSTANTS is not None:
+            self.__set_constants(image)
+
         cropped_images = self.__crop(image)
         for index, cropped in enumerate(cropped_images):
             preprocessed_image = self.__preprocess(cropped)
@@ -41,14 +52,26 @@ class Isolator:
 
         return contours_signal_type
 
-    def __crop(self, image):
-        if constants.CAMERA_POSITION is 0:
-            image_info = image[80:220, 0:340, :]
-            image_stop = image[280:420, 0:340, :]
+    def __set_constants(self, image):
+        image_height, image_width, _ = image.shape
 
-        elif constants.CAMERA_POSITION is 1:
-            image_info = image[140:280, 0:320, :]
-            image_stop = image[340:, 0:320, :]
+        if image_height == 240 and image_width == 320:
+            self.CONSTANTS = IsolatorConstants320240
+        elif image_height == 480 and image_width == 640:
+            self.CONSTANTS = IsolatorConstants640480
+
+    def __crop(self, image):
+        info_start = self.CONSTANTS.CROP_INFO_HEIGHT_START
+        info_end = self.CONSTANTS.CROP_INFO_HEIGHT_END
+
+        stop_start = self.CONSTANTS.CROP_STOP_HEIGHT_START
+        stop_end = self.CONSTANTS.CROP_STOP_HEIGHT_END
+
+        width_start = self.CONSTANTS.CROP_WIDTH_START
+        width_end = self.CONSTANTS.CROP_WIDTH_END
+
+        image_info = image[info_start:info_end, width_start:width_end, :]
+        image_stop = image[stop_start:stop_end, width_start:width_end, :]
 
         return [image_info, image_stop]
 
@@ -76,29 +99,29 @@ class Isolator:
         # calculate mean of the image
         mean = np.mean(image)
         # everything that is below the mean of the image will be set to black
-        image[image <= mean + 30] = 0
+        image[image <= mean + self.CONSTANTS.ADDITION_MEAN] = 0
         # convert the image back to a numpy array
         image = np.asarray(image, np.uint8)
 
         return image
 
     def __threshold(self, image):
-        image = cv2.inRange(image, 20, 200)
+        image = cv2.inRange(image, self.CONSTANTS.THRESHOLD_LOWER, self.CONSTANTS.THRESHOLD_UPPER)
 
         return image
 
     def __find_contours(self, image):
         image_height, image_width = image.shape
-        contours, hierarchy = cv2.findContours(image, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
+        _, contours, hierarchy = cv2.findContours(image, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
         contours_hierarchy = []
         for i, cnt in enumerate(contours):
             if (hierarchy[0][i][3] != -1 and hierarchy[0][i][2] == -1) or \
                     (hierarchy[0][i][3] == -1 and hierarchy[0][i][2] > 0) or \
                     (hierarchy[0][i][3] > 0 and hierarchy[0][i][2] > 0):
-                if 370 < cv2.contourArea(cnt) < 2500:
+                if self.CONSTANTS.AREA_SIZE_MIN < cv2.contourArea(cnt) < self.CONSTANTS.AREA_SIZE_MAX:
                     x, y, w, h = cv2.boundingRect(cnt)
-                    if w < 55 and h < 100:
-                        if 0.35 < w / h < 0.75:
+                    if w < self.CONSTANTS.WIDTH_MAX and h < self.CONSTANTS.HEIGHT_MAX:
+                        if self.CONSTANTS.WIDTH_HEIGHT_RATIO_MIN < w / h < self.CONSTANTS.WIDTH_HEIGHT_RATIO_MAX:
                             length = int(w)
                             height = int(h)
 
@@ -121,9 +144,9 @@ class Isolator:
         anz_pixel_black = anz_pixel - anz_pixel_white
         anz_pixel_black_ratio = (anz_pixel_black / anz_pixel) * 100
 
-        if anz_pixel_black_ratio <= 35:
+        if anz_pixel_black_ratio <= self.CONSTANTS.PIXEL_RATIO_MIN:
             qualifies_as_number = False
-        elif anz_pixel_black_ratio >= 75:
+        elif anz_pixel_black_ratio >= self.CONSTANTS.PIXEL_RATIO_MAX:
             qualifies_as_number = False
         else:
             qualifies_as_number = True
