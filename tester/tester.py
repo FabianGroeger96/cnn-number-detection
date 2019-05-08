@@ -2,6 +2,8 @@ import cv2
 import constants
 import os
 import shutil
+import numpy as np
+from tqdm import tqdm
 from isolator.isolator import Isolator
 from trainer.models.model_gnet_light import ModelGNetLight
 
@@ -52,17 +54,44 @@ class Tester:
         cv2.waitKey(0)
 
     def __classify_for_signal(self, image):
-        contours = self.isolator.get_contours(image)
+        contours = self.isolator.get_contours_and_rois(image)
 
         contour_images = []
 
         for contour_arr in contours:
-            contour = contour_arr[0]
-            contour_image = contour_arr[1]
+            contours = contour_arr[0]
+            rois = contour_arr[1]
+            contour_image = contour_arr[2]
+            contour_image = cv2.cvtColor(contour_image, cv2.COLOR_GRAY2RGB)
 
             draw_image = np.copy(contour_image)
-            if contour is not None:
-                cv2.drawContours(draw_image, contour, -1, (255, 153, 255), 1)
+            if contours is not None:
+                for index, cnt in enumerate(contours):
+                    roi = rois[index]
+                    roi_processed = self.isolator.reshape_image_for_input(roi)
+                    prediction = self.model.predict([roi_processed])
+
+                    i = prediction.argmax(axis=1)[0]
+                    label = constants.CATEGORIES[i]
+                    confidence = int(prediction[0][i] * 100)
+
+                    if label == '-1' or confidence < 95:
+                        color = (0, 0, 255)
+                    else:
+                        color = (0, 255, 0)
+
+                    # draw the bounding box
+                    x, y, w, h = cv2.boundingRect(cnt)
+                    cv2.rectangle(draw_image, (x, y), (x + w, y + h), color, 2)
+
+                    # draw the text
+                    height, width, _ = draw_image.shape
+                    if y - 10 < 20:
+                        y = y + h + 20
+                    else:
+                        y = y - 10
+                    img_string = "L:{} C:{}%".format(label, confidence)
+                    cv2.putText(draw_image, img_string, (x, y), cv2.FONT_HERSHEY_PLAIN, 0.8, color, 1, cv2.LINE_AA)
 
             contour_images.append(draw_image)
 
@@ -72,11 +101,11 @@ class Tester:
         frames = []
 
         current_working_dir = os.getcwd()
-        listdir = os.path.join(current_working_dir, folder_name)
+        listdir = os.listdir(current_working_dir + '/{}'.format(folder_name))
         listdir = [f for f in listdir]
         listdir.sort()
         for f in listdir:
-            file_string = current_working_dir + "/{}/{:s}".format(folder_name, f)
+            file_string = current_working_dir + '/{}/{:s}'.format(folder_name, f)
             try:
                 frame = cv2.imread(file_string)
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -86,16 +115,22 @@ class Tester:
 
         os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
+        # create the directories
         erun_path = os.path.join(current_working_dir, folder_name, 'simulation')
         if os.path.exists(erun_path):
             shutil.rmtree(erun_path, ignore_errors=True)
-        os.makedirs(current_working_dir + "/continous/erun/original")
-        os.makedirs(current_working_dir + "/continous/erun/contours")
+        os.makedirs(os.path.join(current_working_dir, folder_name, 'simulation', 'original'))
+        os.makedirs(os.path.join(current_working_dir, folder_name, 'simulation', 'recognized'))
 
         for i, frame in enumerate(tqdm(frames)):
             result = self.__classify_for_signal(frame)
-            frameString = "/pic_{:08d}.jpg".format(i)
-            cv2.imwrite((current_working_dir + "/continous/erun/original" + frameString), frame)
-            for index, image in enumerate(result):
-                frameString = "/pic_{}_{:08d}.jpg".format(index, i)
-                cv2.imwrite((current_working_dir + "/continous/erun/contours" + frameString), image)
+
+            # save original image
+            frame_string = 'pic_{:08d}.jpg'.format(i)
+            save_string = os.path.join(current_working_dir, folder_name, 'simulation', 'original', frame_string)
+            cv2.imwrite(save_string, frame)
+
+            # save recognized image
+            frame_string = 'pic_{:08d}.jpg'.format(i)
+            save_string = os.path.join(current_working_dir, folder_name, 'simulation', 'recognized', frame_string)
+            cv2.imwrite(save_string, np.concatenate((result[0], result[1]), axis=0))
