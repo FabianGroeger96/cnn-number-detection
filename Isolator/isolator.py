@@ -172,8 +172,8 @@ class Isolator:
 
     def __check_countours(self, contours):
         contours_removed = []
-        for cnt in contours:
-            for cnt2 in contours:
+        for i_cnt, cnt in enumerate(contours):
+            for i_cnt2, cnt2 in enumerate(contours):
                 if cnt is not cnt2 and cnt not in contours_removed and cnt2 not in contours_removed:
                     x, y, w, h = cv2.boundingRect(cnt2)
                     length = int(w)
@@ -188,8 +188,12 @@ class Isolator:
                     dist_center = cv2.pointPolygonTest(cnt, (center_x, center_y), False)
 
                     if dist_center > -1:
-                        contours.remove(cnt2)
-                        contours_removed.append(cnt2)
+                        if cv2.contourArea(cnt) > cv2.contourArea(cnt2):
+                            del contours[i_cnt2]
+                            contours_removed.append(cnt2)
+                        else:
+                            del contours[i_cnt]
+                            contours_removed.append(cnt)
 
         return contours
 
