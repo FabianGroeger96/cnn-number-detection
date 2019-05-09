@@ -193,10 +193,10 @@ class Extractor:
 
         print('[INFO] saved data model to root directory')
 
-    def categorize_with_trained_model(self):
+    def categorize_with_trained_model(self, model_name):
         print('[INFO] categorizing images')
 
-        model_path = "{}.h5".format(constants.MODEL_DIR)
+        model_path = "{}{}.h5".format(constants.MODEL_DIR, model_name)
         model_obj = ModelGNetLight(weights_path=model_path)
         model = model_obj.model
 

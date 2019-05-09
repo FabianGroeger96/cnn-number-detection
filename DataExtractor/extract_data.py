@@ -12,7 +12,7 @@ def main():
     # extractor.extract_data()
 
     # if you want to categorize images with model
-    # extractor.categorize_with_trained_model()
+    # extractor.categorize_with_trained_model('number_detection_model')
 
     # if you want to randomly delete images, so that all categories have the same amount of images
     # extractor.randomly_delete_images(200)
