@@ -9,8 +9,8 @@ from Isolator.isolator import Isolator
 
 class Tester:
 
-    def __init__(self, model_obj):
-        model_path = "{}.h5".format(constants.MODEL_DIR)
+    def __init__(self, model_obj, model_name):
+        model_path = "{}{}.h5".format(constants.MODEL_DIR, model_name)
         model_obj.create_model(weights_path=model_path)
         self.model = model_obj.model
         self.model.summary()
@@ -73,7 +73,7 @@ class Tester:
                     label = constants.CATEGORIES[i]
                     confidence = int(prediction[0][i] * 100)
 
-                    if label == '-1' or confidence < 95:
+                    if label == '-1' or confidence < 100:
                         color = (0, 0, 255)
                     else:
                         color = (0, 255, 0)

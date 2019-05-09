@@ -3,14 +3,13 @@ from Trainer.Models.model import Model
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
-from tensorflow.python.keras.callbacks import TensorBoard
 
 
-class ModelGNetLight(Model):
+class ModelGNetDeepV2(Model):
 
     def __init__(self, name_postfix):
         # call the init method from superclass
-        model_name = 'CNN-gnet-light-{}'.format(name_postfix)
+        model_name = 'CNN-gnet-deep-v2-{}'.format(name_postfix)
         super().__init__(model_name)
 
     def create_model(self, weights_path=None):
@@ -18,16 +17,23 @@ class ModelGNetLight(Model):
         self.model = Sequential()
 
         # add model layers
-        self.model.add(
-            Conv2D(16, kernel_size=3, input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
-        self.model.add(Activation('relu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        # 1. Layer
+        self.model.add(Conv2D(filters=16, kernel_size=3, strides=1, padding='same',
+                              input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
+        self.model.add(Activation(activation='relu'))
+        self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
-        self.model.add(Conv2D(32, kernel_size=3))
-        self.model.add(Activation('relu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        # 2. Layer
+        self.model.add(Conv2D(filters=32, kernel_size=3, strides=1, padding='same'))
+        self.model.add(Activation(activation='relu'))
+        self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
-        self.model.add(Dropout(rate=0.25))  # 0.5 before
+        # 3. Layer
+        self.model.add(Conv2D(filters=64, kernel_size=3, strides=1, padding='same'))
+        self.model.add(Activation(activation='relu'))
+        self.model.add(MaxPooling2D(pool_size=3, padding='same'))
+
+        self.model.add(Dropout(rate=0.25))
         self.model.add(Flatten())
 
         self.model.add(Dense(len(constants.CATEGORIES)))

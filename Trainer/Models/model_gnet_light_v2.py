@@ -26,7 +26,7 @@ class ModelGNetLightV2(Model):
         self.model.add(Conv2D(32, kernel_size=3, strides=(2, 2)))
         self.model.add(Activation('relu'))
 
-        self.model.add(Dropout(rate=0.5))
+        self.model.add(Dropout(rate=0.25))
         self.model.add(Flatten())
 
         self.model.add(Dense(len(constants.CATEGORIES)))

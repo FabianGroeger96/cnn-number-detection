@@ -2,10 +2,11 @@ import numpy as np
 from Tester.tester import Tester
 from Trainer.Models.model_gnet_light import ModelGNetLight
 from Trainer.Models.model_gnet_deep import ModelGNetDeep
+from Trainer.Models.model_gnet_deep_v2 import ModelGNetDeepV2
 
 
 def main():
-    tester = Tester(ModelGNetDeep('GNet'))
+    tester = Tester(ModelGNetDeepV2('GNet'), 'CNN-gnet-deep-v2-old-new-without-duplicates')
 
     # test the model with a given image
     # Tester.test_model_with_image('frame_overlaying_cnt_2.jpg')

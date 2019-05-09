@@ -53,7 +53,7 @@ class Model:
 
     def save_model(self):
         print('[INFO] saving model')
-        model_path = "{}.h5".format(constants.MODEL_DIR)
+        model_path = "{}{}.h5".format(constants.MODEL_DIR, self.model_name)
         self.model.save(model_path)
         print('[INFO] successfully saved model to: ', model_path)
 
@@ -66,8 +66,8 @@ class Model:
                        batch_size=constants.BATCH_SIZE,
                        epochs=constants.EPOCHS,
                        callbacks=[self.tensorboard])
-
-        tensorboard_visualisation.save_images()
+        # TODO - fix bug, only selcting 7 layers (static) should be variable for various models
+        # tensorboard_visualisation.save_images()
 
         print("[INFO] evaluating network")
         predictions = self.model.predict(self.testX, batch_size=32)
@@ -76,7 +76,7 @@ class Model:
 
     def convert_model_tensorflow(self):
         print('[INFO] saving model for tensorflow')
-        model_output_path = '{}.pb'.format(constants.MODEL_DIR)
+        model_output_path = '{}{}.pb'.format(constants.MODEL_DIR, self.model_name)
         output_path_array = model_output_path.split('/')
         output_path = ''
         output_name = ''
@@ -88,7 +88,7 @@ class Model:
                 output_name = path
 
         keras.backend.set_learning_phase(0)
-        model_input_path = "{}.h5".format(constants.MODEL_DIR)
+        model_input_path = "{}{}.h5".format(constants.MODEL_DIR, self.model_name)
         model = keras.models.load_model(model_input_path)
 
         frozen_graph = self.__freeze_session(keras.backend.get_session(),
