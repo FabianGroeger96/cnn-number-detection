@@ -9,6 +9,9 @@ and a category for 'not numbers'.
 
 *The CNN should be fast enough to run real-time on a Raspberry Pi.*
 
+![Number detection Raspberry Pi](http://fabiangroeger.com/wp-content/uploads/2019/05/cnn-number-detection-gif-5s.gif)
+
+
 ### Includes
 
 - DataExtractor (to extract data for the dataset)
