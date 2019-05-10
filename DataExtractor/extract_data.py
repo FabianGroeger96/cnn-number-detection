@@ -1,4 +1,5 @@
 from DataExtractor.extractor import Extractor
+from Trainer.Models.model_gnet_deep_v2 import ModelGNetDeepV2
 
 
 def main():
@@ -12,7 +13,7 @@ def main():
     # extractor.extract_data()
 
     # if you want to categorize images with model
-    # extractor.categorize_with_trained_model('number_detection_model')
+    # extractor.categorize_with_trained_model(ModelGNetDeepV2('GNet'), 'CNN-gnet-deep-v2-old-new-without-duplicates')
 
     # if you want to randomly delete images, so that all categories have the same amount of images
     # extractor.randomly_delete_images(200)

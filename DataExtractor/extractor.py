@@ -9,7 +9,6 @@ import random
 from natsort import natsorted
 from tqdm import tqdm
 from Isolator.isolator import Isolator
-from Trainer.Models.model_gnet_light import ModelGNetLight
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.preprocessing.image import array_to_img, img_to_array, load_img
 
@@ -193,11 +192,11 @@ class Extractor:
 
         print('[INFO] saved data model to root directory')
 
-    def categorize_with_trained_model(self, model_name):
+    def categorize_with_trained_model(self, model_obj, model_name):
         print('[INFO] categorizing images')
 
         model_path = "{}{}.h5".format(constants.MODEL_DIR, model_name)
-        model_obj = ModelGNetLight(weights_path=model_path)
+        model_obj.create_model(weights_path=model_path)
         model = model_obj.model
 
         extracted_data_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR)
@@ -220,7 +219,7 @@ class Extractor:
                     i = prediction.argmax(axis=1)[0]
                     label = constants.CATEGORIES[i]
 
-                    if prediction[0][i] > 0.95:
+                    if prediction[0][i] > 0.99:
                         os.remove(image_path)
                         image_path = os.path.join(extracted_data_dir, label, img)
                         cv2.imwrite(image_path, image_array)

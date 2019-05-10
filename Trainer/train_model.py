@@ -11,22 +11,22 @@ from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 
 
 def main():
-    # model = ModelGNetLight('old-new-without-duplicates')
-    # model.create_model()
-    # model.train_model()
-    # model.save_model()
-
-    model = ModelGNetLightV2('old-new-without-duplicates')
+    model = ModelGNetLight('new-big-data')
     model.create_model()
     model.train_model()
     model.save_model()
 
-    model = ModelGNetDeep('old-new-without-duplicates')
+    model = ModelGNetLightV2('new-big-data')
     model.create_model()
     model.train_model()
     model.save_model()
 
-    model = ModelGNetDeepV2('old-new-without-duplicates')
+    model = ModelGNetDeep('new-big-data')
+    model.create_model()
+    model.train_model()
+    model.save_model()
+
+    model = ModelGNetDeepV2('new-big-data')
     model.create_model()
     model.train_model()
     model.save_model()

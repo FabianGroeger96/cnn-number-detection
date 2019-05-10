@@ -6,7 +6,7 @@ from Trainer.Models.model_gnet_deep_v2 import ModelGNetDeepV2
 
 
 def main():
-    tester = Tester(ModelGNetDeepV2('GNet'), 'CNN-gnet-deep-v2-old-new-without-duplicates')
+    tester = Tester(ModelGNetDeepV2('GNet'), 'CNN-gnet-deep-v2-new-big-data')
 
     # test the model with a given image
     # Tester.test_model_with_image('frame_overlaying_cnt_2.jpg')
@@ -21,6 +21,9 @@ def main():
 
     # test the model with a folder of images
     tester.test_model_with_folder('continuous')
+
+    # create video from images command
+    # convert *.jpg recognized.mpeg
 
 
 if __name__ == "__main__":
