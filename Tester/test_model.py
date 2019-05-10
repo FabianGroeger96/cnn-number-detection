@@ -20,7 +20,7 @@ def main():
     # Tester.test_model_with_array(image_random_gray)
 
     # test the model with a folder of images
-    tester.test_model_with_folder('continuous')
+    tester.test_model_with_folder('continuous', display_all=False)
 
     # create video from images command
     # convert *.jpg recognized.mpeg

@@ -51,7 +51,7 @@ class Tester:
         cv2.imshow("ROI", image_array)
         cv2.waitKey(0)
 
-    def __classify_for_signal(self, image):
+    def __classify_for_signal(self, image, display_all=True):
         contours = self.isolator.get_contours_and_rois(image)
 
         contour_images = []
@@ -73,29 +73,32 @@ class Tester:
                     label = constants.CATEGORIES[i]
                     confidence = int(prediction[0][i] * 100)
 
+                    color = None
                     if label == '-1' or confidence < 100:
-                        color = (0, 0, 255)
+                        if display_all:
+                            color = (0, 0, 255)
                     else:
                         color = (0, 255, 0)
 
                     # draw the bounding box
                     x, y, w, h = cv2.boundingRect(cnt)
-                    cv2.rectangle(draw_image, (x, y), (x + w, y + h), color, 2)
+                    if color is not None:
+                        cv2.rectangle(draw_image, (x, y), (x + w, y + h), color, 2)
 
-                    # draw the text
-                    height, width, _ = draw_image.shape
-                    if y - 10 < 20:
-                        y = y + h + 20
-                    else:
-                        y = y - 10
-                    img_string = "L:{} C:{}%".format(label, confidence)
-                    cv2.putText(draw_image, img_string, (x, y), cv2.FONT_HERSHEY_PLAIN, 0.8, color, 1, cv2.LINE_AA)
+                        # draw the text
+                        height, width, _ = draw_image.shape
+                        if y - 10 < 20:
+                            y = y + h + 20
+                        else:
+                            y = y - 10
+                        img_string = "L:{} C:{}%".format(label, confidence)
+                        cv2.putText(draw_image, img_string, (x, y), cv2.FONT_HERSHEY_PLAIN, 0.8, color, 1, cv2.LINE_AA)
 
             contour_images.append(draw_image)
 
         return contour_images
 
-    def test_model_with_folder(self, folder_name):
+    def test_model_with_folder(self, folder_name, display_all=True):
         frames = []
 
         current_working_dir = os.getcwd()
@@ -121,7 +124,7 @@ class Tester:
         os.makedirs(os.path.join(current_working_dir, folder_name, 'simulation', 'recognized'))
 
         for i, frame in enumerate(tqdm(frames)):
-            result = self.__classify_for_signal(frame)
+            result = self.__classify_for_signal(frame, display_all=display_all)
 
             # save original image
             frame_string = 'pic_{:08d}.jpg'.format(i)
