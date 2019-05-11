@@ -5,11 +5,16 @@
 The goal of this repository is to implement a number detection using Tensorflow 
 with a custom Convolution Neural Net (CNN) architecture specifically for fast inference.
 The CNN will be trained using a custom created dataset that contains numbers from 1-9 
-and a category for 'not numbers'.
+and a category for 'not numbers (-1)'.
 
-*The CNN should be fast enough to run real-time on a Raspberry Pi.*
+*The CNN is fast enough to run in real-time on a Raspberry Pi.*
 
-![Number detection Raspberry Pi](http://fabiangroeger.com/wp-content/uploads/2019/05/cnn-number-detection-gif-5s.gif)
+![Number detection Raspberry Pi](http://fabiangroeger.com/wp-content/uploads/2019/05/cnn-number-detection-gif.gif)
+
+### Specs
+- **Image size:** 320 x 240
+- **Camera fps:** 38
+- **Processing time (with isolator):** 25ms - 45ms (on Raspberry Pi)
 
 
 ### Includes
@@ -17,7 +22,7 @@ and a category for 'not numbers'.
 - DataExtractor (to extract data for the dataset)
 - Isolator (to find the numbers inside an image)
 - Trainer (to train the model)
-- Tester (to test the model on custom images)
+- Tester (to test the model)
 
 ## Install
 
@@ -93,5 +98,7 @@ to the directory specified in the `constants.py` (`MODEL_DIR`)
 
 1. Check if the model was created in the directory specified in `constants.py` (`MODEL_DIR`)
 2. Upload a testing image to the `tester` directory
-2. Run the `test_model.py` file within the tester and give the `test_model_with_image(image_name)` 
+3. Run the `test_model.py` file within the tester and give the `test_model_with_image(image_name)` 
 function the name of the image
+4. Run the `test_model.py` file within the tester and give the `test_model_with_folder(folder_name)` 
+function the name of the folder containing multiple images to test

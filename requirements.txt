@@ -1,5 +1,7 @@
-tqdm==4.31.1
-numpy==1.16.2
+numpy==1.15.2
+tqdm==4.26.0
+Pillow==6.0.0
+natsort==6.0.0
+scikit_learn==0.21.0
 opencv_python==4.0.1.24
 tensorflow>=1.4.1
-natsort==6.0.0
