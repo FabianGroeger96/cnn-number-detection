@@ -3,6 +3,7 @@ import numpy as np
 import constants
 import random
 import tensorflow as tf
+import os
 from tensorflow import keras
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
@@ -10,6 +11,7 @@ from sklearn.metrics import classification_report
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
 from tensorflow.python.keras.callbacks import TensorBoard
+from tensorflow.python.keras.utils.vis_utils import plot_model
 from Trainer.Utils.tensorboard_filter_visualisation import TensorBoardFilterVisualisation
 
 # only show tensorflow errors
@@ -109,3 +111,7 @@ class Model:
                     node.device = ""
             frozen_graph = convert_variables_to_constants(session, input_graph_def, output_names, freeze_var_names)
             return frozen_graph
+
+    def save_model_architecture_image(self):
+        file_name = os.path.join(constants.ASSET_DIR, 'model_plot_{}.png'.format(self.model_name))
+        plot_model(self.model, to_file=file_name, show_shapes=True, show_layer_names=True)
