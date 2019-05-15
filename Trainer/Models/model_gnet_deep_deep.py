@@ -5,11 +5,11 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 
 
-class ModelGNetDeep(Model):
+class ModelGNetDeepDeep(Model):
 
     def __init__(self, name_postfix):
         # call the init method from superclass
-        model_name = 'CNN-gnet-deep-{}'.format(name_postfix)
+        model_name = 'CNN-gnet-deep-v3-{}'.format(name_postfix)
         super().__init__(model_name)
 
     def create_model(self, weights_path=None):
@@ -18,18 +18,13 @@ class ModelGNetDeep(Model):
 
         # add model layers
         # 1. Layer
-        self.model.add(Conv2D(filters=16, kernel_size=3, strides=1, padding='same',
+        self.model.add(Conv2D(filters=32, kernel_size=3, strides=1, padding='same',
                               input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION),
                               activation='relu'))
-        self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
         # 2. Layer
-        self.model.add(Conv2D(filters=32, kernel_size=3, strides=1, padding='same', activation='relu'))
-        self.model.add(MaxPooling2D(pool_size=3, padding='same'))
-
-        # 3. Layer
         self.model.add(Conv2D(filters=64, kernel_size=3, strides=1, padding='same', activation='relu'))
-        self.model.add(MaxPooling2D(pool_size=3, padding='same'))
+        self.model.add(MaxPooling2D(pool_size=2, padding='same'))
 
         # 4. Layer
         self.model.add(Dropout(rate=0.25))

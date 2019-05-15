@@ -1,8 +1,8 @@
 import constants
 from Trainer.Models.model import Model
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
-from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
 
 
 class ModelGNetDeepV2(Model):
@@ -19,25 +19,24 @@ class ModelGNetDeepV2(Model):
         # add model layers
         # 1. Layer
         self.model.add(Conv2D(filters=16, kernel_size=3, strides=1, padding='same',
-                              input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
-        self.model.add(Activation(activation='relu'))
+                              input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION),
+                              activation='relu'))
         self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
         # 2. Layer
-        self.model.add(Conv2D(filters=32, kernel_size=3, strides=1, padding='same'))
-        self.model.add(Activation(activation='relu'))
+        self.model.add(Conv2D(filters=32, kernel_size=3, strides=1, padding='same', activation='relu'))
         self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
         # 3. Layer
-        self.model.add(Conv2D(filters=64, kernel_size=3, strides=1, padding='same'))
-        self.model.add(Activation(activation='relu'))
+        self.model.add(Conv2D(filters=64, kernel_size=3, strides=1, padding='same', activation='relu'))
         self.model.add(MaxPooling2D(pool_size=3, padding='same'))
 
+        # 4. Layer
         self.model.add(Dropout(rate=0.25))
         self.model.add(Flatten())
 
-        self.model.add(Dense(len(constants.CATEGORIES)))
-        self.model.add(Activation('softmax'))
+        # 5. Layer
+        self.model.add(Dense(len(constants.CATEGORIES), activation='softmax', name='preds'))
 
         # load weights if path is given
         if weights_path:

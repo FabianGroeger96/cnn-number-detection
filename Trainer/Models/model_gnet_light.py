@@ -1,9 +1,8 @@
 import constants
 from Trainer.Models.model import Model
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Dropout, Activation, Flatten
-from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
-from tensorflow.python.keras.callbacks import TensorBoard
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
 
 
 class ModelGNetLight(Model):
@@ -18,20 +17,18 @@ class ModelGNetLight(Model):
         self.model = Sequential()
 
         # add model layers
-        self.model.add(
-            Conv2D(16, kernel_size=3, input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)))
-        self.model.add(Activation('relu'))
+        self.model.add(Conv2D(16, kernel_size=3,
+                              input_shape=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION),
+                              activation='relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
-        self.model.add(Conv2D(32, kernel_size=3))
-        self.model.add(Activation('relu'))
+        self.model.add(Conv2D(32, kernel_size=3, activation='relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
         self.model.add(Dropout(rate=0.25))  # 0.5 before
         self.model.add(Flatten())
 
-        self.model.add(Dense(len(constants.CATEGORIES)))
-        self.model.add(Activation('softmax'))
+        self.model.add(Dense(len(constants.CATEGORIES), activation='softmax', name='preds'))
 
         # load weights if path is given
         if weights_path:
