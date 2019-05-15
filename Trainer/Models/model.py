@@ -62,11 +62,13 @@ class Model:
     def create_model(self, weights_path=None):
         raise NotImplementedError
 
-    def save_model(self):
+    def save_model(self, visualize_model=False):
         print('[INFO] saving model')
         model_path = "{}{}.h5".format(constants.MODEL_DIR, self.model_name)
         self.model.save(model_path)
         print('[INFO] successfully saved model to: ', model_path)
+        if visualize_model:
+            self.__visualize_model()
 
     def train_model(self):
         print('[INFO] training model')
@@ -117,7 +119,15 @@ class Model:
             frozen_graph = convert_variables_to_constants(session, input_graph_def, output_names, freeze_var_names)
             return frozen_graph
 
+    def __visualize_model(self):
+        self.visualize_model_architecture_image()
+        self.visualize_dense_layer()
+        self.visualize_feature_map()
+        self.visualize_heat_map()
+
     def visualize_model_architecture_image(self):
+        print('[INFO] visualizing model architecture')
+
         # create folder for saving visualization
         save_path = os.path.join(constants.MODEL_DIR, 'Visualization', self.model_name)
         if not os.path.exists(save_path):
@@ -127,6 +137,8 @@ class Model:
         plot_model(self.model, to_file=file_name, show_shapes=True, show_layer_names=True)
 
     def visualize_dense_layer(self):
+        print('[INFO] visualizing dense layers')
+
         # create folder for saving visualization
         save_path = os.path.join(constants.MODEL_DIR, 'Visualization', self.model_name)
         if not os.path.exists(save_path):
@@ -153,6 +165,8 @@ class Model:
             plt.show()
 
     def visualize_feature_map(self):
+        print('[INFO] visualizing feature map')
+
         # create folder for saving visualization
         save_path = os.path.join(constants.MODEL_DIR, 'Visualization', self.model_name)
         if not os.path.exists(save_path):
@@ -189,6 +203,8 @@ class Model:
             plt.show()
 
     def visualize_heat_map(self):
+        print('[INFO] visualizing heat map')
+
         # create folder for saving visualization
         save_path = os.path.join(constants.MODEL_DIR, 'Visualization', self.model_name)
         if not os.path.exists(save_path):
