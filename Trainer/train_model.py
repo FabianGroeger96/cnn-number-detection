@@ -4,6 +4,8 @@ from Trainer.Models.model_gnet_light import ModelGNetLight
 from Trainer.Models.model_gnet_light_v2 import ModelGNetLightV2
 from Trainer.Models.model_gnet_deep import ModelGNetDeep
 from Trainer.Models.model_gnet_deep_v2 import ModelGNetDeepV2
+from Trainer.Models.model_gnet_deep_v3 import ModelGNetDeepV3
+from Trainer.Models.model_gnet_deep_deep import ModelGNetDeepDeep
 from Trainer.Models.model import Model
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Activation, Flatten
@@ -11,26 +13,37 @@ from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 
 
 def main():
-    model = ModelGNetLight('new-big-data')
+    model = ModelGNetLight('ultimate-data-15-epochs-128-batch-size')
     model.create_model()
     model.train_model()
-    model.save_model()
+    model.save_model(visualize_model=True)
 
-    model = ModelGNetLightV2('new-big-data')
+    model = ModelGNetLightV2('ultimate-data-15-epochs-128-batch-size')
     model.create_model()
     model.train_model()
-    model.save_model()
+    model.save_model(visualize_model=True)
 
-    model = ModelGNetDeep('new-big-data')
+    model = ModelGNetDeep('ultimate-data-15-epochs-128-batch-size')
     model.create_model()
     model.train_model()
-    model.save_model()
+    model.save_model(visualize_model=True)
 
-    model = ModelGNetDeepV2('new-big-data')
+    model = ModelGNetDeepV2('ultimate-data-15-epochs-128-batch-size')
     model.create_model()
     model.train_model()
-    model.save_model()
+    model.save_model(visualize_model=True)
 
+    model = ModelGNetDeepV3('ultimate-data-15-epochs-128-batch-size')
+    model.create_model()
+    model.train_model()
+    model.save_model(visualize_model=True)
+
+    model = ModelGNetDeepDeep('ultimate-data-15-epochs-128-batch-size')
+    model.create_model()
+    model.train_model()
+    model.save_model(visualize_model=True)
+
+    # train multiple models for finding the perfect hyperparameters
     # train_multiple_models('full-dataset-aug-rand',
     #                       dense_layers=[0, 1, 2],
     #                       layer_sizes=[16, 32, 64],
