@@ -255,13 +255,13 @@ class Extractor:
 
         self.rename_images_in_categories()
 
-    def augment_all_categories(self):
+    def augment_all_categories(self, aug_count=10):
         print('[INFO] generating data')
 
         for category in constants.CATEGORIES:
-            self.augment_category(category)
+            self.augment_category(category, aug_count)
 
-    def augment_category(self, category):
+    def augment_category(self, category, aug_count=10):
         time.sleep(.5)
         print('[INFO] augmenting images in category {}'.format(category))
         time.sleep(.5)
@@ -291,5 +291,5 @@ class Extractor:
                         image_path = os.path.join(category_dir, image_name)
                         new_image.save(image_path)
                         # break infinite loop after generated 10 images
-                        if i >= 10:
+                        if i >= aug_count:
                             break

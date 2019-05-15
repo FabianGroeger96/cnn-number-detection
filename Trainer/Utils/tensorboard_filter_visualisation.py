@@ -14,6 +14,7 @@ class TensorBoardFilterVisualisation:
         self.name = name
         self.prediction_image = prediction_image
         # Extracts the outputs of the top 7 layers
+        # TODO - display all layers until dropout layer
         self.layer_outputs = [layer.output for layer in self.model.layers[:7]]
         # Creates a model that will return these outputs, given the model input
         self.activation_model = models.Model(inputs=self.model.input,

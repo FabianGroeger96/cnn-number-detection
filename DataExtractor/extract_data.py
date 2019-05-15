@@ -7,19 +7,19 @@ def main():
     extractor = Extractor()
 
     # if you want to rename image names
-    # extractor.rename_images_in_categories()
+    extractor.rename_images_in_categories()
 
     # if you want to extract data from images
     # extractor.extract_data()
 
     # if you want to categorize images with model
-    # extractor.categorize_with_trained_model(ModelGNetDeepV2('GNet'), 'CNN-gnet-deep-v2-old-new-without-duplicates')
+    # extractor.categorize_with_trained_model(ModelGNetDeepV2('GNet'), 'CNN-gnet-deep-v2-new-big-data')
 
     # if you want to randomly delete images, so that all categories have the same amount of images
     # extractor.randomly_delete_images(200)
 
     # if you want to generate more data with data augmentation
-    # extractor.augment_all_categories()
+    extractor.augment_all_categories(20)
 
     # if you need more data, invert image
     # extractor.create_inverse_data('7')
@@ -28,7 +28,7 @@ def main():
     # extractor.create_random_images('-1', 2000)
 
     # if you want to create the data model for the cnn
-    # extractor.create_training_data()
+    extractor.create_training_data()
 
 
 if __name__ == "__main__":

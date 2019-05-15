@@ -13,8 +13,6 @@ class Tester:
         model_path = "{}{}.h5".format(constants.MODEL_DIR, model_name)
         model_obj.create_model(weights_path=model_path)
         self.model = model_obj.model
-        self.model.summary()
-
         self.isolator = Isolator()
 
     def test_model_with_image(self, image_path):
