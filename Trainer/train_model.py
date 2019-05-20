@@ -15,33 +15,33 @@ from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 def main():
     model = ModelGNetLight('ultimate-data-15-epochs-128-batch-size')
     model.create_model()
-    model.train_model()
+    model.train_model_with_generator()
     model.save_model(visualize_model=True)
+    #
+    # model = ModelGNetLightV2('ultimate-data-15-epochs-128-batch-size')
+    # model.create_model()
+    # model.train_model()
+    # model.save_model()
 
-    model = ModelGNetLightV2('ultimate-data-15-epochs-128-batch-size')
-    model.create_model()
-    model.train_model()
-    model.save_model(visualize_model=True)
-
-    model = ModelGNetDeep('ultimate-data-15-epochs-128-batch-size')
-    model.create_model()
-    model.train_model()
-    model.save_model(visualize_model=True)
-
-    model = ModelGNetDeepV2('ultimate-data-15-epochs-128-batch-size')
-    model.create_model()
-    model.train_model()
-    model.save_model(visualize_model=True)
-
-    model = ModelGNetDeepV3('ultimate-data-15-epochs-128-batch-size')
-    model.create_model()
-    model.train_model()
-    model.save_model(visualize_model=True)
-
-    model = ModelGNetDeepDeep('ultimate-data-15-epochs-128-batch-size')
-    model.create_model()
-    model.train_model()
-    model.save_model(visualize_model=True)
+    # model = ModelGNetDeep('ultimate-data-15-epochs-128-batch-size')
+    # model.create_model()
+    # model.train_model()
+    # model.save_model(visualize_model=True)
+    #
+    # model = ModelGNetDeepV2('ultimate-data-15-epochs-128-batch-size')
+    # model.create_model()
+    # model.train_model()
+    # model.save_model(visualize_model=True)
+    #
+    # model = ModelGNetDeepV3('ultimate-data-15-epochs-128-batch-size')
+    # model.create_model()
+    # model.train_model()
+    # model.save_model(visualize_model=True)
+    #
+    # model = ModelGNetDeepDeep('ultimate-data-15-epochs-128-batch-size')
+    # model.create_model()
+    # model.train_model()
+    # model.save_model(visualize_model=True)
 
     # train multiple models for finding the perfect hyperparameters
     # train_multiple_models('full-dataset-aug-rand',

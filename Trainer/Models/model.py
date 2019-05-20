@@ -15,6 +15,7 @@ from keras import activations
 from keras.callbacks import TensorBoard
 from keras.utils.vis_utils import plot_model
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
+from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from vis.visualization import visualize_activation
 from vis.visualization import visualize_saliency
 from vis.visualization import visualize_cam, overlay
@@ -78,8 +79,31 @@ class Model:
                        epochs=constants.EPOCHS,
                        callbacks=[self.tensorboard])
 
+        self.__evaluate_model()
+
+    def train_model_with_generator(self):
+        print('[INFO] training model with image data generator')
+        image_data_gen = ImageDataGenerator(
+            rotation_range=15,
+            width_shift_range=0.1,
+            height_shift_range=0.1,
+            shear_range=0.2,
+            zoom_range=[0.8, 1.1],
+            brightness_range=[0.5, 1.5],
+            fill_mode='reflect')
+
+        image_data_gen.fit(self.trainX)
+
+        self.model.fit_generator(image_data_gen.flow(self.trainX, self.trainY, batch_size=constants.BATCH_SIZE),
+                                 validation_data=(self.testX, self.testY),
+                                 steps_per_epoch=len(self.trainX) // constants.BATCH_SIZE,
+                                 epochs=constants.EPOCHS)
+
+        self.__evaluate_model()
+
+    def __evaluate_model(self):
         print("[INFO] evaluating network")
-        predictions = self.model.predict(self.testX, batch_size=32)
+        predictions = self.model.predict(self.testX, batch_size=constants.BATCH_SIZE)
         print(classification_report(self.testY.argmax(axis=1),
                                     predictions.argmax(axis=1), target_names=self.lb.classes_))
 
@@ -189,8 +213,11 @@ class Model:
             ax[0].imshow(self.testX[idx][..., 0])
 
             for i, modifier in enumerate([None, 'guided', 'relu']):
-                grads = visualize_saliency(model, layer_idx, filter_indices=class_idx,
-                                           seed_input=self.testX[idx], backprop_modifier=modifier)
+                grads = visualize_saliency(model, layer_idx,
+                                           filter_indices=class_idx,
+                                           seed_input=self.testX[idx],
+                                           backprop_modifier=modifier,
+                                           grad_modifier='negate')
                 if modifier is None:
                     modifier = 'vanilla'
 
@@ -226,8 +253,10 @@ class Model:
             ax[0].imshow(self.testX[idx][..., 0])
 
             for i, modifier in enumerate([None, 'guided', 'relu']):
-                grads = visualize_cam(model, layer_idx, filter_indices=None,
-                                      seed_input=self.testX[idx], backprop_modifier=modifier)
+                grads = visualize_cam(model, layer_idx,
+                                      filter_indices=None,
+                                      seed_input=self.testX[idx],
+                                      backprop_modifier=modifier)
 
                 # create heat map to overlay on image
                 jet_heat_map = np.uint8(cm.jet(grads)[..., :3] * 255)
