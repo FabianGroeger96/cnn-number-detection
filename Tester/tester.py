@@ -1,3 +1,4 @@
+import logging
 import cv2
 import constants
 import os
@@ -15,6 +16,10 @@ class Tester:
         self.model = model_obj.model
         self.isolator = Isolator()
 
+        # create logger
+        self.logger = None
+        self.__create_logger()
+
     def test_model_with_image(self, image_path):
         image_array = cv2.imread(image_path)
         image_array = cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB)
@@ -30,9 +35,10 @@ class Tester:
             i = prediction.argmax(axis=1)[0]
             label = constants.CATEGORIES[i]
 
-            print('Prediction: image type: {}, {} ({:.2f}%)'.format(constants.SIGNAL_TYPES[roi_type],
-                                                                    label,
-                                                                    prediction[0][i] * 100))
+            self.logger.info(
+                '[Prediction] type: {}, category: {} ({:.2f}%)'.format(constants.SIGNAL_TYPES[roi_type],
+                                                                       label,
+                                                                       prediction[0][i] * 100))
 
             cv2.imshow("ROI", roi)
             cv2.waitKey(0)
@@ -44,7 +50,7 @@ class Tester:
         i = prediction.argmax(axis=1)[0]
         label = constants.CATEGORIES[i]
 
-        print('Prediction: {} ({:.2f}%)'.format(label, prediction[0][i] * 100))
+        self.logger.info('[Prediction] {} ({:.2f}%)'.format(label, prediction[0][i] * 100))
 
         cv2.imshow("ROI", image_array)
         cv2.waitKey(0)
@@ -133,3 +139,11 @@ class Tester:
             frame_string = 'pic_{:08d}.jpg'.format(i)
             save_string = os.path.join(current_working_dir, folder_name, 'simulation', 'recognized', frame_string)
             cv2.imwrite(save_string, np.concatenate((result[0], result[1]), axis=0))
+
+    def __create_logger(self):
+        self.logger = logging.getLogger("Tester")
+        self.logger.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        self.logger.addHandler(ch)
