@@ -5,3 +5,4 @@ natsort==6.0.0
 scikit_learn==0.21.0
 opencv_python==4.0.1.24
 tensorflow>=1.4.1
+keras-vis==0.4.1
