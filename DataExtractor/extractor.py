@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 import cv2
@@ -32,14 +33,18 @@ class Extractor:
 
         self.training_data = []
 
+        # create logger
+        self.logger = None
+        self.__create_logger()
+
     def extract_data(self):
-        print('[INFO] extracting regions of interest from data')
+        self.logger.info('extracting regions of interest from data')
 
         input_dir = os.path.join(self.current_working_dir, constants.INPUT_DATA_DIR)
-        print('[INFO] Input directory: ', input_dir)
+        self.logger.info('Input directory: {}'.format(input_dir))
 
         output_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR)
-        print('[INFO] Output directory: ', output_dir)
+        self.logger.info('Output directory: {}'.format(output_dir))
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -65,16 +70,16 @@ class Extractor:
                         cv2.imwrite(roi_file_name, roi)
 
             except Exception as e:
-                print(e)
+                self.logger.error('Error in extracting data: {}'.format(e))
 
-        print('[INFO] creating folders for sorting rois in categories')
+        self.logger.info('creating folders for sorting rois in categories')
         for category in constants.CATEGORIES:
             category_dir = os.path.join(output_dir, category)
             if not os.path.exists(category_dir):
                 os.makedirs(category_dir)
 
     def rename_images_in_categories(self):
-        print('[INFO] renaming images in categories')
+        self.logger.info('renaming images in categories')
 
         for category in constants.CATEGORIES:
             category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
@@ -105,7 +110,7 @@ class Extractor:
                                 break
 
     def create_inverse_data(self, category):
-        print('[INFO] creating inverse data in category {}'.format(category))
+        self.logger.info('creating inverse data in category {}'.format(category))
 
         category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
 
@@ -125,7 +130,7 @@ class Extractor:
                 cv2.imwrite(image_path, image_inv)
 
     def create_random_images(self, category, count):
-        print('[INFO] creating random images in category {}'.format(category))
+        self.logger.info('creating random images in category {}'.format(category))
 
         category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
 
@@ -141,7 +146,7 @@ class Extractor:
             cv2.imwrite(image_path, image_rand)
 
     def create_training_data(self):
-        print('[INFO] creating training data')
+        self.logger.info('creating training data')
 
         self.training_data.clear()
         for category in constants.CATEGORIES:
@@ -164,14 +169,14 @@ class Extractor:
                         self.training_data.append([new_array, category])
                 # exceptions are ignored, to keep the output clean
                 except Exception as e:
-                    pass
+                    self.logger.error('Error in creating training data: {}'.format(e))
 
         random.shuffle(self.training_data)
 
         self.__create_model()
 
     def __create_model(self):
-        print('[INFO] creating data model')
+        self.logger.info('Creating data model')
 
         X = []
         y = []
@@ -190,10 +195,10 @@ class Extractor:
         pickle.dump(y, pickle_out)
         pickle_out.close()
 
-        print('[INFO] saved data model to root directory')
+        self.logger.info('Saved data model to root directory')
 
     def categorize_with_trained_model(self, model_obj, model_name):
-        print('[INFO] categorizing images')
+        self.logger.info('Categorizing images')
 
         model_path = "{}{}.h5".format(constants.MODEL_DIR, model_name)
         model_obj.create_model(weights_path=model_path)
@@ -226,10 +231,10 @@ class Extractor:
 
             # exceptions are ignored, to keep the output clean
             except Exception as e:
-                pass
+                self.logger.error('Error in categorizing with trained model: {}'.format(e))
 
     def randomly_delete_images(self, count_files_after_delete):
-        print('[INFO] randomly deleting images from categories')
+        self.logger.info('Randomly deleting images from categories')
 
         for category in constants.CATEGORIES:
             category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
@@ -239,7 +244,7 @@ class Extractor:
 
             if count_delete > 0:
 
-                print('[INFO] deleting {} images in category {}'.format(count_delete, category))
+                self.logger.info('Deleting {} images in category {}'.format(count_delete, category))
 
                 for i in range(0, count_delete - 1):
                     while True:
@@ -256,15 +261,14 @@ class Extractor:
         self.rename_images_in_categories()
 
     def augment_all_categories(self, aug_count=10):
-        print('[INFO] generating data')
+        self.logger.info('Generating data')
 
         for category in constants.CATEGORIES:
             self.augment_category(category, aug_count)
 
     def augment_category(self, category, aug_count=10):
-        time.sleep(.5)
-        print('[INFO] augmenting images in category {}'.format(category))
-        time.sleep(.5)
+        self.logger.info('Augmenting images in category {}'.format(category))
+
         # create the input path for category
         category_dir = os.path.join(self.current_working_dir, constants.OUTPUT_DATA_DIR, category)
         # searches files in category dir
@@ -293,3 +297,11 @@ class Extractor:
                         # break infinite loop after generated 10 images
                         if i >= aug_count:
                             break
+
+    def __create_logger(self):
+        self.logger = logging.getLogger("Extractor")
+        self.logger.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        self.logger.addHandler(ch)
