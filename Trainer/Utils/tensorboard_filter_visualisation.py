@@ -5,6 +5,7 @@ import io
 import constants
 from PIL import Image
 from tensorflow.python.keras import models
+from vis.utils import utils
 
 
 class TensorBoardFilterVisualisation:
@@ -13,9 +14,9 @@ class TensorBoardFilterVisualisation:
         self.model = model
         self.name = name
         self.prediction_image = prediction_image
-        # Extracts the outputs of the top 7 layers
-        # TODO - display all layers until dropout layer
-        self.layer_outputs = [layer.output for layer in self.model.layers[:7]]
+        # Extracts the outputs of the layers until dropout layer
+        layer_dropout_index = utils.find_layer_idx(self.model, 'dropout_1')
+        self.layer_outputs = [layer.output for layer in self.model.layers[:layer_dropout_index]]
         # Creates a model that will return these outputs, given the model input
         self.activation_model = models.Model(inputs=self.model.input,
                                              outputs=self.layer_outputs)
@@ -69,10 +70,6 @@ class TensorBoardFilterVisualisation:
         return images_filter_layers, layer_names
 
     def __make_image(self, image):
-        """
-        Convert an numpy representation image to Image protobuf.
-        Copied from https://github.com/lanpa/tensorboard-pytorch/
-        """
         height, width = image.shape
         image = Image.fromarray(image)
         output = io.BytesIO()
