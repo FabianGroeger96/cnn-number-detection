@@ -2,7 +2,7 @@ from Isolator.isolator_constants import IsolatorConstants
 
 
 class IsolatorConstants320240(IsolatorConstants):
-    AREA_SIZE_MIN = 90
+    AREA_SIZE_MIN = 85
     AREA_SIZE_MAX = 650
 
     WIDTH_MAX = 30
