@@ -11,12 +11,11 @@ from Isolator.isolator import Isolator
 class Tester:
 
     def __init__(self, model_obj, model_name):
-        model_path = "{}{}.h5".format(constants.MODEL_DIR, model_name)
+        model_path = '{}{}.h5'.format(constants.MODEL_DIR, model_name)
         model_obj.create_model(weights_path=model_path)
         self.model = model_obj.model
         self.isolator = Isolator()
 
-        # create logger
         self.logger = None
         self.__create_logger()
 
@@ -40,7 +39,7 @@ class Tester:
                                                                        label,
                                                                        prediction[0][i] * 100))
 
-            cv2.imshow("ROI", roi)
+            cv2.imshow('ROI', roi)
             cv2.waitKey(0)
 
     def test_model_with_array(self, image_array):
@@ -52,7 +51,7 @@ class Tester:
 
         self.logger.info('[Prediction] {} ({:.2f}%)'.format(label, prediction[0][i] * 100))
 
-        cv2.imshow("ROI", image_array)
+        cv2.imshow('ROI', image_array)
         cv2.waitKey(0)
 
     def __classify_for_signal(self, image, display_all=True):
@@ -95,7 +94,7 @@ class Tester:
                             y = y + h + 20
                         else:
                             y = y - 10
-                        img_string = "L:{} C:{}%".format(label, confidence)
+                        img_string = 'L:{} C:{}%'.format(label, confidence)
                         cv2.putText(draw_image, img_string, (x, y), cv2.FONT_HERSHEY_PLAIN, 0.8, color, 1, cv2.LINE_AA)
 
             contour_images.append(draw_image)
@@ -141,8 +140,8 @@ class Tester:
             cv2.imwrite(save_string, np.concatenate((result[0], result[1]), axis=0))
 
     def __create_logger(self):
-        self.logger = logging.getLogger("Tester")
-        self.logger.setLevel(logging.DEBUG)
+        self.logger = logging.getLogger('Tester')
+        self.logger.setLevel(constants.LOG_LEVEL)
         ch = logging.StreamHandler()
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)

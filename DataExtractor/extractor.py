@@ -1,12 +1,10 @@
 import logging
 import os
-import time
 import cv2
 import numpy as np
 import pickle
 import constants
 import random
-
 from natsort import natsorted
 from tqdm import tqdm
 from Isolator.isolator import Isolator
@@ -33,7 +31,6 @@ class Extractor:
 
         self.training_data = []
 
-        # create logger
         self.logger = None
         self.__create_logger()
 
@@ -55,7 +52,7 @@ class Extractor:
         for image in tqdm(list_dir):
             image_name = image
             image_name = image_name.partition('.')[0]
-            file_string = self.current_working_dir + "/{:s}/{:s}".format(constants.INPUT_DATA_DIR, image)
+            file_string = self.current_working_dir + '/{:s}/{:s}'.format(constants.INPUT_DATA_DIR, image)
 
             try:
                 image = cv2.imread(file_string)
@@ -66,7 +63,7 @@ class Extractor:
                     for index, roi_arr in enumerate(regions_of_interest):
                         roi = roi_arr[0]
                         roi_type = roi_arr[1]
-                        roi_file_name = output_dir + "/{:s}_{:s}_{:s}.jpg".format(image_name, str(index), str(roi_type))
+                        roi_file_name = output_dir + '/{:s}_{:s}_{:s}.jpg'.format(image_name, str(index), str(roi_type))
                         cv2.imwrite(roi_file_name, roi)
 
             except Exception as e:
@@ -95,7 +92,7 @@ class Extractor:
                     # remove the loaded image
                     os.remove(image_path)
 
-                    image_name = "{:s}.jpg".format(str(index))
+                    image_name = '{:s}.jpg'.format(str(index))
                     image_path = os.path.join(category_dir, image_name)
                     if not os.path.exists(image_path):
                         cv2.imwrite(image_path, image_array)
@@ -103,7 +100,7 @@ class Extractor:
                         i = index
                         while True:
                             i += 1
-                            image_name = "{:s}.jpg".format(str(i))
+                            image_name = '{:s}.jpg'.format(str(i))
                             image_path = os.path.join(category_dir, image_name)
                             if not os.path.exists(image_path):
                                 cv2.imwrite(image_path, image_array)
@@ -125,7 +122,7 @@ class Extractor:
                 # invert image
                 image_inv = cv2.bitwise_not(image_array)
 
-                image_name = "{:s}_inv.jpg".format(str(index))
+                image_name = '{:s}_inv.jpg'.format(str(index))
                 image_path = os.path.join(category_dir, image_name)
                 cv2.imwrite(image_path, image_inv)
 
@@ -141,7 +138,7 @@ class Extractor:
                 image_rand = np.random.randint(0, 255,
                                                size=(constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION),
                                                dtype=np.uint8)
-            image_name = "{:s}_rand.jpg".format(str(index))
+            image_name = '{:s}_rand.jpg'.format(str(index))
             image_path = os.path.join(category_dir, image_name)
             cv2.imwrite(image_path, image_rand)
 
@@ -187,11 +184,11 @@ class Extractor:
 
         X = np.array(X).reshape(-1, constants.IMG_SIZE, constants.IMG_SIZE, constants.DIMENSION)
 
-        pickle_out = open("../X.pickle", "wb")
+        pickle_out = open('../X.pickle', 'wb')
         pickle.dump(X, pickle_out)
         pickle_out.close()
 
-        pickle_out = open("../y.pickle", "wb")
+        pickle_out = open('../y.pickle', 'wb')
         pickle.dump(y, pickle_out)
         pickle_out.close()
 
@@ -200,7 +197,7 @@ class Extractor:
     def categorize_with_trained_model(self, model_obj, model_name):
         self.logger.info('Categorizing images')
 
-        model_path = "{}{}.h5".format(constants.MODEL_DIR, model_name)
+        model_path = '{}{}.h5'.format(constants.MODEL_DIR, model_name)
         model_obj.create_model(weights_path=model_path)
         model = model_obj.model
 
@@ -291,7 +288,7 @@ class Extractor:
                         # we access only first image because of batch_size=1
                         new_image = array_to_img(new_images[0], scale=True)
                         # save the augmented image
-                        image_name = "{:s}_{:s}_aug.jpg".format(img, str(i))
+                        image_name = '{:s}_{:s}_aug.jpg'.format(img, str(i))
                         image_path = os.path.join(category_dir, image_name)
                         new_image.save(image_path)
                         # break infinite loop after generated 10 images
@@ -299,8 +296,8 @@ class Extractor:
                             break
 
     def __create_logger(self):
-        self.logger = logging.getLogger("Extractor")
-        self.logger.setLevel(logging.DEBUG)
+        self.logger = logging.getLogger('Extractor')
+        self.logger.setLevel(constants.LOG_LEVEL)
         ch = logging.StreamHandler()
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
