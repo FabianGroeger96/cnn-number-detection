@@ -1,5 +1,5 @@
 class IsolatorConstants:
-    WIDTH_HEIGHT_RATIO_MIN = 0.325
+    WIDTH_HEIGHT_RATIO_MIN = 0.31
     WIDTH_HEIGHT_RATIO_MAX = 0.75
 
     PIXEL_RATIO_MIN = 25
