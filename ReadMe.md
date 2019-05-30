@@ -24,6 +24,23 @@ and a category for 'not numbers (-1)'.
 - Trainer (to train the model)
 - Tester (to test the model)
 
+## Example input images
+
+![Example input image 1](http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_1.jpg)
+
+![Example input image 2](http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_2.jpg)
+
+![Example input image 3](http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_3.jpg)
+
+## Example extracted images (dataset images)
+
+![Example extracted image 1](http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_1.jpg)
+
+![Example extracted image 2](http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_2.jpg)
+
+![Example extracted image 3](http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_3.jpg)
+
+
 ## Install
 
 ### Requirements
