@@ -16,6 +16,10 @@ and a category for 'not numbers (-1)'.
 - **Camera fps:** 38
 - **Processing time (with isolator):** 25ms - 45ms (on Raspberry Pi)
 
+### Download links
+- [trained models](https://www.dropbox.com/s/hd8yu239te6d0yv/TrainedModels.zip?dl=0)
+- [dataset](https://www.dropbox.com/s/iaf18cvt5jaoq06/PREN_dataset.zip?dl=0)
+- [example images for isolator](https://www.dropbox.com/s/4ukv5v0r11nnovf/PREN_images.zip?dl=0)
 
 ### Includes
 
