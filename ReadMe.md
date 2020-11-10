@@ -12,7 +12,7 @@ and a category for 'not numbers (-1)'.
 ![Number detection Raspberry Pi](http://fabiangroeger.com/wp-content/uploads/2019/05/cnn-number-detection-gif.gif)
 
 ### Specs
-- **Image size:** 320 x 240
+- **Image size (input to the model):** 320 x 240
 - **Camera fps:** 38
 - **Processing time (with isolator):** 25ms - 45ms (on Raspberry Pi)
 
