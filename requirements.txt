@@ -1,6 +1,6 @@
 numpy==1.15.2
 tqdm==4.26.0
-Pillow==6.2.0
+Pillow==7.1.0
 natsort==6.0.0
 scikit_learn==0.21.0
 opencv_python==4.0.1.24
