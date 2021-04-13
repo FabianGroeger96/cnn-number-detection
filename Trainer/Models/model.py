@@ -1,30 +1,27 @@
+import cv2
+import keras
 import logging
-import pickle
+import matplotlib.cm as cm
 import numpy as np
-import constants
+import os
+import pickle
 import random
 import tensorflow as tf
-import os
-import keras
-import matplotlib.cm as cm
-import cv2
-from sklearn.preprocessing import LabelBinarizer
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-from keras.optimizers import Adam
 from keras import activations
 from keras.callbacks import TensorBoard
+from keras.optimizers import Adam
 from keras.utils.vis_utils import plot_model
+from matplotlib import pyplot as plt
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelBinarizer
 from tensorflow.python.framework.graph_util import convert_variables_to_constants
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
-from vis.visualization import visualize_activation
-from vis.visualization import visualize_saliency
-from vis.visualization import visualize_cam, overlay
-from vis.utils import utils
-from matplotlib import pyplot as plt
+
+import constants
 
 # only show tensorflow errors
-tf.logging.set_verbosity(tf.logging.ERROR)
+logging.getLogger("tensorflow").setLevel(logging.ERROR)
 # same for numpy
 np.seterr(divide='ignore', invalid='ignore')
 
@@ -33,7 +30,12 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 class Model:
 
-    def __init__(self, model_name):
+    def __init__(self, model_name, load_data=True):
+        self.logger = None
+        self.__create_logger()
+
+        self.logger.info('Creating model: {}'.format(model_name))
+
         # specify the model
         self.model = None
         self.model_name = model_name
@@ -44,6 +46,18 @@ class Model:
         # to start tensorboard run: tensorboard --logdir=logs/, in working directory
         self.tensorboard = TensorBoard(log_dir='logs/{}'.format(model_name))
 
+        self.lb = LabelBinarizer()
+
+        if load_data:
+            self.trainX, self.testX, self.trainY, self.testY = self.load_data()
+            self.data_loaded = True
+
+    def create_model(self, weights_path=None):
+        raise NotImplementedError
+
+    def load_data(self):
+        self.logger.info('Loading data')
+
         # load the image data and scale the pixels intensities to range [0, 1]
         X = pickle.load(open('../X.pickle', 'rb'))
         X = X / 255
@@ -52,20 +66,14 @@ class Model:
         y = pickle.load(open('../y.pickle', 'rb'))
 
         # train test split
-        (self.trainX, self.testX, self.trainY, self.testY) = train_test_split(X, y,
-                                                                              test_size=constants.VALIDATION_SPLIT,
-                                                                              random_state=42)
-        self.lb = LabelBinarizer()
-        self.trainY = self.lb.fit_transform(self.trainY)
-        self.testY = self.lb.transform(self.testY)
+        trainX, testX, trainY, testY = train_test_split(X, y,
+                                                        test_size=constants.VALIDATION_SPLIT,
+                                                        random_state=42)
+        # transform the data
+        trainY = self.lb.fit_transform(self.trainY)
+        testY = self.lb.transform(self.testY)
 
-        self.logger = None
-        self.__create_logger()
-
-        self.logger.info('Creating model: {}'.format(model_name))
-
-    def create_model(self, weights_path=None):
-        raise NotImplementedError
+        return trainX, testX, trainY, testY
 
     def save_model(self, visualize_model=False):
         self.logger.info('Saving model')
@@ -77,6 +85,8 @@ class Model:
 
     def train_model(self):
         self.logger.info('Training model')
+        if not self.data_loaded:
+            self.trainX, self.testX, self.trainY, self.testY = self.load_data()
         self.model.fit(self.trainX, self.trainY,
                        validation_data=(self.testX, self.testY),
                        batch_size=constants.BATCH_SIZE,
@@ -87,6 +97,10 @@ class Model:
 
     def train_model_with_generator(self):
         self.logger.info('Training model with image data generator')
+
+        if not self.data_loaded:
+            self.trainX, self.testX, self.trainY, self.testY = self.load_data()
+
         image_data_gen = ImageDataGenerator(
             rotation_range=15,
             width_shift_range=0.1,
@@ -95,7 +109,6 @@ class Model:
             zoom_range=[0.8, 1.1],
             brightness_range=[0.5, 1.5],
             fill_mode='reflect')
-
         image_data_gen.fit(self.trainX)
 
         self.model.fit_generator(image_data_gen.flow(self.trainX, self.trainY, batch_size=constants.BATCH_SIZE),

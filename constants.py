@@ -4,7 +4,7 @@ INPUT_DATA_DIR = "images_to_extract"
 OUTPUT_DATA_DIR = "data_extracted"
 CATEGORIES = ["-1", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
-MODEL_DIR = "../TrainedModels/"
+MODEL_DIR = "TrainedModels/"
 
 IMG_SIZE = 28
 USE_GRAY_SCALE = True

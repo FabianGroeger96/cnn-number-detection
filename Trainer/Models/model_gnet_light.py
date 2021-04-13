@@ -7,10 +7,10 @@ from keras.layers import Conv2D, MaxPooling2D
 
 class ModelGNetLight(Model):
 
-    def __init__(self, name_postfix):
+    def __init__(self, name_postfix, load_data=True):
         # call the init method from superclass
         model_name = 'CNN-gnet-light-{}'.format(name_postfix)
-        super().__init__(model_name)
+        super().__init__(model_name, load_data=load_data)
 
     def create_model(self, weights_path=None):
         # create model
