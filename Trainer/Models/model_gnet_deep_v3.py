@@ -10,6 +10,7 @@ class ModelGNetDeepV3(Model):
     def __init__(self, name_postfix, load_data=True):
         # call the init method from superclass
         model_name = 'CNN-gnet-deep-v3-{}'.format(name_postfix)
+        self.uses_color = True
         super().__init__(model_name, load_data=load_data)
 
     def create_model(self, weights_path=None):
