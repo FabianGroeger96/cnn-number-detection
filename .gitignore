@@ -125,3 +125,4 @@ dmypy.json
 .idea
 core
 .DS_Store
+*.swp

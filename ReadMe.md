@@ -123,3 +123,11 @@ to the directory specified in the `constants.py` (`MODEL_DIR`)
 function the name of the image
 4. Run the `test_model.py` file within the tester and give the `test_model_with_folder(folder_name)` 
 function the name of the folder containing multiple images to test
+
+## Additional Remarks
+
+Command to create a video out of a bunch of images.
+```bash
+ convert *.jpg recognized.mpeg
+ ```
+

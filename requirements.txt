@@ -3,7 +3,7 @@ tqdm>=4.26.0
 Pillow>=8.1.1
 natsort>=6.0.0
 scikit_learn>=0.21.0
-opencv_python>=4.0.1.24
+opencv_python>=4.1.2.30
 tensorflow>=1.4.1
 scipy>=1.1.0
 six
