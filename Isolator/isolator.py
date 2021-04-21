@@ -129,7 +129,7 @@ class Isolator:
 
     def __find_contours(self, image):
         image_height, image_width = image.shape
-        _, contours, hierarchy = cv2.findContours(image, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
+        contours, hierarchy = cv2.findContours(image, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
         contours_hierarchy = []
         for i, cnt in enumerate(contours):
             if (hierarchy[0][i][3] != -1 and hierarchy[0][i][2] == -1) or \
