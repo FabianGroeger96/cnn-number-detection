@@ -1,6 +1,6 @@
 # CNN number detection
 
-<h2 align="center">
+<h2>
  
 [![Stars](https://img.shields.io/github/stars/FabianGroeger96/cnn-number-detection?style=for-the-badge)](https://img.shields.io/github/stars/FabianGroeger96/cnn-number-detection?style=for-the-badge)
 [![Forks](https://img.shields.io/github/forks/FabianGroeger96/cnn-number-detection?style=for-the-badge)](https://img.shields.io/github/forks/FabianGroeger96/cnn-number-detection?style=for-the-badge)
@@ -135,12 +135,28 @@ to the directory specified in the `constants.py` (`MODEL_DIR`)
 
 ### Test the CNN
 
-1. Check if the model was created in the directory specified in `constants.py` (`MODEL_DIR`)
-2. Upload a testing image to the `tester` directory
-3. Run the `test_model.py` file within the tester and give the `test_model_with_image(image_name)` 
-function the name of the image
-4. Run the `test_model.py` file within the tester and give the `test_model_with_folder(folder_name)` 
-function the name of the folder containing multiple images to test
+```
+usage: test_model.py [-h] [--model_type MODEL_TYPE] [--model_path MODEL_PATH] [--test_image TEST_IMAGE]
+                     [--test_folder TEST_FOLDER] [--test_on_random]
+
+cnn-number-detection
+
+optional arguments:
+  -h, --help                 show this help message and exit
+  --model_type MODEL_TYPE    type of model to use
+  --model_path MODEL_PATH    path to the saved model
+  --test_image TEST_IMAGE    path to the image for testing the model
+  --test_folder TEST_FOLDER  folder with images for inference
+  --test_on_random           if a randomly generated image should be used for inference
+```
+
+1. Check if the model is in the directory specified in `constants.py` (`MODEL_DIR`)
+2. Upload a testing image or a folder full of test images to the `tester` directory
+3. Specify the correct model type (`--model_type`) and model path (`--model_path`)
+4. Run inference
+     1. Run the `test_model.py` file within the `Tester` by specifying the image with `--test_image`
+     2. Run the `test_model.py` file within the `Tester` by specifying the folder with `--test_folder` 
+     3. Run the `test_model.py` file within the `Tester` on a random image with `--test_on_random`
 
 ## Additional Remarks
 
