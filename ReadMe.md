@@ -1,5 +1,22 @@
 # CNN number detection
 
+<h2 align="center">
+ 
+[![Stars](https://img.shields.io/github/stars/FabianGroeger96/cnn-number-detection?style=for-the-badge)](https://img.shields.io/github/stars/FabianGroeger96/cnn-number-detection?style=for-the-badge)
+[![Forks](https://img.shields.io/github/forks/FabianGroeger96/cnn-number-detection?style=for-the-badge)](https://img.shields.io/github/forks/FabianGroeger96/cnn-number-detection?style=for-the-badge)
+[![GitHub Issues](https://img.shields.io/github/issues/FabianGroeger96/cnn-number-detection?style=for-the-badge)](https://img.shields.io/github/issues/FabianGroeger96/cnn-number-detection?style=for-the-badge)
+[![License](https://img.shields.io/github/license/FabianGroeger96/cnn-number-detection?style=for-the-badge)](https://img.shields.io/github/license/FabianGroeger96/cnn-number-detection?style=for-the-badge)
+![Contribotion](https://img.shields.io/badge/Contribution-Welcome-brightgreen?style=for-the-badge)
+
+</h2>
+
+## Table of Contents
+1. [Project](#project)
+2. [Example Images](#example-images)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Additional Remarks](#additional-remarks)
+
 ## Project
 
 The goal of this repository is to implement a number detection using Tensorflow 
@@ -28,28 +45,29 @@ and a category for 'not numbers (-1)'.
 - Trainer (to train the model)
 - Tester (to test the model)
 
-## Example input images
+## Example Images
 
-![Example input image 1](http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_1.jpg)
+### Example input images
 
-![Example input image 2](http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_2.jpg)
+<table><tr>
+<td> <img src="http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_1.jpg" alt="Example Image" style="width: 250px;"/> </td>
+<td> <img src="http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_2.jpg" alt="Example Image" style="width: 250px;"/> </td>
+<td> <img src="http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_3.jpg" alt="Example Image" style="width: 250px;"/> </td>
+</tr></table>
 
-![Example input image 3](http://fabiangroeger.com/wp-content/uploads/2019/05/example_input_image_3.jpg)
+### Example extracted images (dataset images)
 
-## Example extracted images (dataset images)
+<table><tr>
+<td> <img src="http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_1.jpg" alt="Example Extracted" style="width: 250px;"/> </td>
+<td> <img src="http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_2.jpg" alt="Example Extracted" style="width: 250px;"/> </td>
+<td> <img src="http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_3.jpg" alt="Example Extracted" style="width: 250px;"/> </td>
+</tr></table>
 
-![Example extracted image 1](http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_1.jpg)
-
-![Example extracted image 2](http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_2.jpg)
-
-![Example extracted image 3](http://fabiangroeger.com/wp-content/uploads/2019/05/example_extracted_image_3.jpg)
-
-
-## Install
+## Installation
 
 ### Requirements
 
-You need to have the following packages installed:
+You need to have the following packages installed (check `requirements.txt`):
 
 - Python 3.6
 - Tensorflow 1.4.1+
