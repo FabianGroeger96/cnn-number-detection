@@ -6,7 +6,6 @@
 [![License](https://img.shields.io/github/license/FabianGroeger96/cnn-number-detection?style=for-the-badge)](https://img.shields.io/github/license/FabianGroeger96/cnn-number-detection?style=for-the-badge)
 ![Contribotion](https://img.shields.io/badge/Contribution-Welcome-brightgreen?style=for-the-badge)
 <br>
-<a href="https://www.buymeacoffee.com/fabiangroeger" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
 ## Table of Contents
 1. [Project](#project)
